@@ -1,0 +1,29 @@
+// app/api/policies/route.ts
+// 선택 사항: 클라이언트에서 정책 목록을 받아야 할 때 쓰는 프록시 라우트.
+// 서버 컴포넌트에서 lib/youthApi의 함수를 직접 부르는 게 우선이고,
+// 무한스크롤/검색 등 클라이언트 인터랙션이 필요할 때만 이 라우트를 씁니다.
+// 인증키는 서버에만 머무르므로 안전합니다.
+
+import { NextRequest, NextResponse } from "next/server";
+import { getPolicies, getPoliciesByCategory } from "@/lib/youthApi";
+
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get("category");
+    const keyword = searchParams.get("q") ?? undefined;
+    const pageNum = Number(searchParams.get("page") ?? "1");
+    const pageSize = Number(searchParams.get("size") ?? "12");
+
+    try {
+        const data = category
+            ? await getPoliciesByCategory(category, pageNum, pageSize)
+            : await getPolicies({ plcyNm: keyword, pageNum, pageSize });
+
+        return NextResponse.json(data, {
+            headers: { "Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400" },
+        });
+    } catch (e) {
+        const msg = e instanceof Error ? e.message : "알 수 없는 오류";
+        return NextResponse.json({ error: msg }, { status: 500 });
+    }
+}
