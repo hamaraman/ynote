@@ -55,7 +55,7 @@ export default function MobileNav() {
             {/* Mobile Menu Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black opacity-100 z-40 md:hidden"
+                    className="fixed inset-0 bg-black opacity-100 z-[60]"
                     onClick={() => setIsOpen(false)}
                 />
             )}
