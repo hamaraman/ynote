@@ -50,6 +50,7 @@ export default function RootLayout({
                 </nav>
               </div>
             </div>
+          </div>
         </header>
 
         <main className="flex-1">{children}</main>
