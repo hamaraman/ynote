@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:app.notion.com)",
+      "Bash(curl -s \"https://www.youthcenter.go.kr/go/ythip/getPlcy?apiKeyNm=f559e151-e1c7-4455-9ebf-9422fe4941b2&rtnType=json&pageType=1&pageNum=1&pageSize=3\")",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000/category/housing)",
+      "Bash(curl -s http://localhost:3000/policy/20260605005400113228)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npm list *)",
+      "Bash(curl -s \"https://www.youthcenter.go.kr/go/ythip/getPlcy?apiKeyNm=f559e151-e1c7-4455-9ebf-9422fe4941b2&rtnType=json&pageType=2&pageNum=1&pageSize=1&plcyNo=20260605005400113228\")",
+      "Bash(curl -s http://localhost:3000/policy/pass)",
+      "Bash(pkill -f \"next\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  }
+}

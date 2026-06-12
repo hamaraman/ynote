@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllPolicies } from "@/lib/posts";
 import { getPoliciesByCategory, type YouthPolicy } from "@/lib/youthApi";
-import { formatYmd } from "@/lib/youthApi";
 
 const categories = {
     finance: { name: "금융/자산", icon: "💰", description: "청년도약계좌, 청약통장, 소득공제펀드 등 자산 형성에 도움 되는 정책" },
@@ -32,18 +31,67 @@ export async function generateMetadata({
     };
 }
 
-function ApiPolicyItem({ policy }: { policy: YouthPolicy }) {
+function MarkdownPolicyCard({ policy }: { policy: ReturnType<typeof getAllPolicies>[number] }) {
     return (
-        <li className="py-5 hover:text-teal-600 transition">
-            <Link href={`/policy/${policy.plcyNo}`} className="block">
-                <h2 className="font-semibold mb-1">{policy.plcyNm}</h2>
-                <p className="text-sm text-gray-600 line-clamp-2">{policy.plcyExplnCn}</p>
-                <p className="text-xs text-gray-400 mt-2">
-                    {policy.aplyYmd ? `신청: ${policy.aplyYmd}` : "상시 신청"}
-                    {policy.sprvsnInstCdNm && ` · ${policy.sprvsnInstCdNm}`}
-                </p>
-            </Link>
-        </li>
+        <Link
+            href={`/policy/${policy.slug}`}
+            className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
+        >
+            <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full">
+                    읽어보기
+                </span>
+            </div>
+            <h2 className="font-semibold mb-2">{policy.title}</h2>
+            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{policy.description}</p>
+            <div className="flex items-center gap-3 text-xs text-gray-500">
+                <span>📅 {policy.date}</span>
+                {policy.updated && policy.updated !== policy.date && (
+                    <span>업데이트: {policy.updated}</span>
+                )}
+            </div>
+        </Link>
+    );
+}
+
+function ApiPolicyCard({ policy }: { policy: YouthPolicy }) {
+    const keywords = policy.plcyKywdNm?.split(",").filter(Boolean).slice(0, 3) || [];
+
+    return (
+        <Link
+            href={`/policy/${policy.plcyNo}`}
+            className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
+        >
+            <div className="flex items-center gap-2 mb-3">
+                {policy.mclsfNm && (
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                        {policy.mclsfNm}
+                    </span>
+                )}
+                {keywords.map((kw, i) => (
+                    <span key={i} className="text-xs px-2 py-1 bg-teal-50 text-teal-600 rounded-full">
+                        {kw.trim()}
+                    </span>
+                ))}
+            </div>
+            <h2 className="font-semibold mb-2 line-clamp-2">{policy.plcyNm}</h2>
+            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{policy.plcyExplnCn}</p>
+            {policy.plcySprtCn && (
+                <div className="bg-amber-50 rounded-lg p-3 mb-3">
+                    <p className="text-xs text-amber-800 font-medium mb-1">💰 지원 내용</p>
+                    <p className="text-sm text-gray-700 line-clamp-2">{policy.plcySprtCn}</p>
+                </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                <span>📅 {policy.aplyYmd || "상시 신청"}</span>
+                {policy.sprvsnInstCdNm && (
+                    <span>🏛️ {policy.sprvsnInstCdNm}</span>
+                )}
+                {policy.sprtTrgtAgeLmtYn === "Y" && policy.sprtTrgtMinAge && (
+                    <span>👤 만 {policy.sprtTrgtMinAge}{policy.sprtTrgtMaxAge ? `~${policy.sprtTrgtMaxAge}` : ""}세</span>
+                )}
+            </div>
+        </Link>
     );
 }
 
@@ -57,11 +105,12 @@ export default async function CategoryPage({
     if (!cat) notFound();
 
     const markdownPolicies = getAllPolicies().filter((p) => p.categorySlug === slug);
-    const apiData = await getPoliciesByCategory(slug, 1, 12);
+    const apiData = await getPoliciesByCategory(slug, 1, 24);
     const apiPolicies = apiData.result?.youthPolicyList ?? [];
+    const totalCount = apiData.result?.pagging?.totCount ?? apiPolicies.length;
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-12">
+        <div className="max-w-5xl mx-auto px-4 py-12">
             <Link href="/" className="text-sm text-teal-600 hover:underline">
                 ← 홈
             </Link>
@@ -71,41 +120,45 @@ export default async function CategoryPage({
             <p className="text-gray-600 mb-8">{cat.description}</p>
 
             {markdownPolicies.length === 0 && apiPolicies.length === 0 ? (
-                <div className="bg-gray-50 rounded-2xl p-8 text-center text-gray-500">
-                    <p>이 카테고리에 해당하는 글이 곧 추가됩니다.</p>
+                <div className="bg-gray-50 rounded-2xl p-12 text-center">
+                    <p className="text-gray-500 mb-2">아직 정책이 없습니다.</p>
+                    <p className="text-sm text-gray-400">
+                        곧 새로운 정책이 추가될 예정입니다.
+                    </p>
                 </div>
             ) : (
                 <>
                     {markdownPolicies.length > 0 && (
                         <section className="mb-10">
-                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">📖 읽어보기</h2>
-                            <ul className="divide-y divide-gray-200 border-y border-gray-200">
+                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
+                                📖 읽어보기 ({markdownPolicies.length}개)
+                            </h2>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {markdownPolicies.map((p) => (
-                                    <li key={p.slug}>
-                                        <Link
-                                            href={`/policy/${p.slug}`}
-                                            className="block py-5 hover:text-teal-600 transition"
-                                        >
-                                            <h2 className="font-semibold mb-1">{p.title}</h2>
-                                            <p className="text-sm text-gray-600">{p.description}</p>
-                                            <p className="text-xs text-gray-400 mt-2">{p.date}</p>
-                                        </Link>
-                                    </li>
+                                    <MarkdownPolicyCard key={p.slug} policy={p} />
                                 ))}
-                            </ul>
+                            </div>
                         </section>
                     )}
 
                     {apiPolicies.length > 0 && (
                         <section>
                             <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
-                                📋 정부 정책 ({apiData.result?.pagging?.totCount?.toLocaleString() ?? apiPolicies.length}건)
+                                📋 정부 정책 ({totalCount.toLocaleString()}건)
                             </h2>
-                            <ul className="divide-y divide-gray-200 border-y border-gray-200">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {apiPolicies.map((p) => (
-                                    <ApiPolicyItem key={p.plcyNo} policy={p} />
+                                    <ApiPolicyCard key={p.plcyNo} policy={p} />
                                 ))}
-                            </ul>
+                            </div>
+                            <div className="mt-8 text-center">
+                                <Link
+                                    href={`/search`}
+                                    className="inline-block px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition"
+                                >
+                                    더 많은 정책 검색하기
+                                </Link>
+                            </div>
                         </section>
                     )}
                 </>
