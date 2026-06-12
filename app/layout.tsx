@@ -50,18 +50,6 @@ export default function RootLayout({
                 </nav>
               </div>
             </div>
-            <nav className="md:hidden flex gap-1 overflow-x-auto pb-2">
-              {categories.map((c) => (
-                <Link
-                  key={c.href}
-                  href={c.href}
-                  className="flex-shrink-0 px-3 py-1.5 text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-full"
-                >
-                  {c.icon} {c.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
         </header>
 
         <main className="flex-1">{children}</main>
