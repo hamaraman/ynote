@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllPolicies } from "@/lib/posts";
+import { getPoliciesByCategory, type YouthPolicy } from "@/lib/youthApi";
+import { formatYmd } from "@/lib/youthApi";
 
 const categories = {
     finance: { name: "금융/자산", icon: "💰", description: "청년도약계좌, 청약통장, 소득공제펀드 등 자산 형성에 도움 되는 정책" },
@@ -30,6 +32,21 @@ export async function generateMetadata({
     };
 }
 
+function ApiPolicyItem({ policy }: { policy: YouthPolicy }) {
+    return (
+        <li className="py-5 hover:text-teal-600 transition">
+            <Link href={`/policy/${policy.plcyNo}`} className="block">
+                <h2 className="font-semibold mb-1">{policy.plcyNm}</h2>
+                <p className="text-sm text-gray-600 line-clamp-2">{policy.plcyExplnCn}</p>
+                <p className="text-xs text-gray-400 mt-2">
+                    {policy.aplyYmd ? `신청: ${policy.aplyYmd}` : "상시 신청"}
+                    {policy.sprvsnInstCdNm && ` · ${policy.sprvsnInstCdNm}`}
+                </p>
+            </Link>
+        </li>
+    );
+}
+
 export default async function CategoryPage({
                                                params,
                                            }: {
@@ -39,7 +56,9 @@ export default async function CategoryPage({
     const cat = categories[slug as keyof typeof categories];
     if (!cat) notFound();
 
-    const policies = getAllPolicies().filter((p) => p.categorySlug === slug);
+    const markdownPolicies = getAllPolicies().filter((p) => p.categorySlug === slug);
+    const apiData = await getPoliciesByCategory(slug, 1, 12);
+    const apiPolicies = apiData.result?.youthPolicyList ?? [];
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
@@ -51,25 +70,45 @@ export default async function CategoryPage({
             </h1>
             <p className="text-gray-600 mb-8">{cat.description}</p>
 
-            {policies.length === 0 ? (
+            {markdownPolicies.length === 0 && apiPolicies.length === 0 ? (
                 <div className="bg-gray-50 rounded-2xl p-8 text-center text-gray-500">
-                    <p>이 카테고리의 글이 곧 추가됩니다.</p>
+                    <p>이 카테고리에 해당하는 글이 곧 추가됩니다.</p>
                 </div>
             ) : (
-                <ul className="divide-y divide-gray-200 border-y border-gray-200">
-                    {policies.map((p) => (
-                        <li key={p.slug}>
-                            <Link
-                                href={`/policy/${p.slug}`}
-                                className="block py-5 hover:text-teal-600 transition"
-                            >
-                                <h2 className="font-semibold mb-1">{p.title}</h2>
-                                <p className="text-sm text-gray-600">{p.description}</p>
-                                <p className="text-xs text-gray-400 mt-2">{p.date}</p>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <>
+                    {markdownPolicies.length > 0 && (
+                        <section className="mb-10">
+                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">📖 읽어보기</h2>
+                            <ul className="divide-y divide-gray-200 border-y border-gray-200">
+                                {markdownPolicies.map((p) => (
+                                    <li key={p.slug}>
+                                        <Link
+                                            href={`/policy/${p.slug}`}
+                                            className="block py-5 hover:text-teal-600 transition"
+                                        >
+                                            <h2 className="font-semibold mb-1">{p.title}</h2>
+                                            <p className="text-sm text-gray-600">{p.description}</p>
+                                            <p className="text-xs text-gray-400 mt-2">{p.date}</p>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+
+                    {apiPolicies.length > 0 && (
+                        <section>
+                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
+                                📋 정부 정책 ({apiData.result?.pagging?.totCount?.toLocaleString() ?? apiPolicies.length}건)
+                            </h2>
+                            <ul className="divide-y divide-gray-200 border-y border-gray-200">
+                                {apiPolicies.map((p) => (
+                                    <ApiPolicyItem key={p.plcyNo} policy={p} />
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+                </>
             )}
         </div>
     );

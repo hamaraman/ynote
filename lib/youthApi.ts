@@ -12,10 +12,10 @@ const API_KEY = process.env.YOUTH_API_KEY;
 export interface YouthPolicy {
     plcyNo: string; // 정책번호
     plcyNm: string; // 정책명
-    plcyKywdNm: string; // 정책키워드명 (콤마 구분)
+    plcyKywdNm: string | null; // 정책키워드명 (콤마 구분)
     plcyExplnCn: string; // 정책설명내용
-    lclsfNm: string; // 정책대분류명
-    mclsfNm: string; // 정책중분류명
+    lclsfNm: string | null; // 정책대분류명
+    mclsfNm: string | null; // 정책중분류명
     plcySprtCn: string; // 정책지원내용
     sprvsnInstCdNm: string; // 주관기관명
     operInstCdNm: string; // 운영기관명
@@ -45,6 +45,11 @@ export interface YouthPolicy {
     inqCnt: string; // 조회수
     frstRegDt: string; // 최초등록일시
     lastMdfcnDt: string; // 최종수정일시
+    // 추가 필드
+    mrgSttsCd: string; // 결혼상태코드
+    jobCd: string; // 취업상태코드
+    schoolCd: string; // 재학상태코드
+    sbizCd: string; // 사업구분코드
 }
 
 /** 응답 래퍼. 키 발급 후 실제 응답을 보고 필드명이 다르면 여기만 수정하면 됩니다. */
@@ -71,15 +76,14 @@ export interface GetPoliciesParams {
     zipCd?: string; // 법정시군구코드 (콤마 구분)
 }
 
-/** 사이트 카테고리 slug -> API 정책대분류명(lclsfNm) 매핑.
- *  주의: 아래 대분류명은 청년노트 6개 카테고리에 맞춘 예상값입니다.
- *  키 발급 후 실제 응답의 lclsfNm 값을 확인해 정확히 맞춰주세요. */
+/** site 카테고리 slug -> API 정책대분류명(lclsfNm) 매핑.
+ *  실제 API 응답 기반으로 2026-06-12 확인 완료. */
 export const CATEGORY_TO_LCLSF: Record<string, string> = {
-    finance: "일자리", // 금융/자산 — 실제 대분류명 확인 후 조정
+    finance: "금융･복지･문화",
     housing: "주거",
     job: "일자리",
     edu: "교육",
-    life: "복지문화",
+    life: "금융･복지･문화",
     region: "참여권리",
 };
 

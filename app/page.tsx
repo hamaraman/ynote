@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getPolicies } from "@/lib/youthApi";
 
 const categories = [
   { name: "금융/자산", href: "/category/finance", icon: "💰", desc: "청년도약계좌, 청약통장, 소득공제펀드", color: "bg-amber-50 hover:bg-amber-100" },
@@ -15,7 +16,10 @@ const popular = [
   { title: "국민내일배움카드 신청부터 사용까지", href: "/policy/tomorrow-learning-card", cat: "일자리" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const apiData = await getPolicies({}, 60 * 30);
+  const recentPolicies = apiData.result?.youthPolicyList ?? [];
+
   return (
       <div className="max-w-5xl mx-auto px-4">
         <section className="py-12 md:py-20 text-center">
@@ -56,6 +60,30 @@ export default function Home() {
             ))}
           </ul>
         </section>
+
+        {recentPolicies.length > 0 && (
+          <section className="pb-16">
+            <h2 className="text-xl font-bold mb-4">
+              최신 정부 정책
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                ({apiData.result?.pagging?.totCount?.toLocaleString() ?? recentPolicies.length}건)
+              </span>
+            </h2>
+            <ul className="divide-y divide-gray-200 border-y border-gray-200">
+              {recentPolicies.slice(0, 8).map((p) => (
+                <li key={p.plcyNo}>
+                  <Link href={`/policy/${p.plcyNo}`} className="flex items-center justify-between py-4 hover:text-teal-600 transition">
+                    <span>
+                      <span className="text-xs text-gray-500 mr-2">[{p.lclsfNm}]</span>
+                      {p.plcyNm}
+                    </span>
+                    <span className="text-gray-400">→</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
   );
 }
