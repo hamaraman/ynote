@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
+import MobileNav from "@/components/MobileNav";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +36,7 @@ export default function RootLayout({
               </Link>
               <div className="flex items-center gap-3">
                 <ThemeToggle />
+                <MobileNav />
                 <nav className="hidden md:flex gap-1">
                   {categories.map((c) => (
                     <Link
