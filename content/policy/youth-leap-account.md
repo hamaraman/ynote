@@ -97,7 +97,7 @@ date: "2026-06-10"
 ## 함께 보면 좋은 정책
 
 - [청년 월세 지원금](/policy/youth-rent-support)
-- [국민내일배움카드](/policy/tomorrow-learning-card)
+- [국민내일배움카드](/policy/learning-card)
 
 ---
 

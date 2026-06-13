@@ -62,7 +62,7 @@ function ApiPolicyCard({ policy }: { policy: YouthPolicy }) {
             href={`/policy/${policy.plcyNo}`}
             className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
         >
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
                 {policy.mclsfNm && (
                     <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
                         {policy.mclsfNm}

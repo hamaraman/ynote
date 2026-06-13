@@ -62,16 +62,16 @@ export default function MobileNav() {
 
             {/* Mobile Menu Drawer */}
             <div
-                className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[80] transform transition-transform duration-300 ease-out md:hidden ${
+                className={`fixed top-0 right-0 h-full w-80 bg-white/95 backdrop-blur-md shadow-2xl z-[90] transform transition-transform duration-300 ease-out md:hidden dark:bg-slate-800/95 dark:backdrop-blur-md ${
                     isOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
-                <div className="p-4 border-b border-gray-200">
+                <div className="p-4 border-b border-gray-200 dark:border-slate-700">
                     <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-teal-600">📒 메뉴</span>
+                        <span className="text-lg font-bold text-teal-600 dark:text-teal-400">📒 메뉴</span>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100"
+                            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
                         >
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -79,21 +79,21 @@ export default function MobileNav() {
                         </button>
                     </div>
                 </div>
-                <nav className="p-4">
+                <nav className="p-4 bg-white dark:bg-slate-800 h-full">
                     <Link
                         href="/"
-                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition"
+                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                     >
                         🏠 홈
                     </Link>
                     <Link
                         href="/search"
-                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition"
+                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                     >
                         🔍 정책 검색
                     </Link>
-                    <div className="my-4 border-t border-gray-200" />
-                    <div className="px-4 py-2 text-xs text-gray-500 font-medium uppercase tracking-wider">
+                    <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
+                    <div className="px-4 py-2 text-xs text-gray-500 font-medium uppercase tracking-wider dark:text-gray-400">
                         카테고리
                     </div>
                     {categories.map((c) => (
@@ -102,24 +102,24 @@ export default function MobileNav() {
                             href={c.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                                 pathname === c.href
-                                    ? "bg-teal-50 text-teal-700 font-medium"
-                                    : "text-gray-700 hover:bg-gray-50"
+                                    ? "bg-teal-50 text-teal-700 font-medium dark:bg-teal-900/50 dark:text-teal-300"
+                                    : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-slate-700"
                             }`}
                         >
                             <span>{c.icon}</span>
                             <span>{c.name}</span>
                         </Link>
                     ))}
-                    <div className="my-4 border-t border-gray-200" />
+                    <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
                     <Link
                         href="/about"
-                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition"
+                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                     >
                         ℹ️ 사이트 소개
                     </Link>
                     <Link
                         href="/contact"
-                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition"
+                        className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                     >
                         ✉️ 문의하기
                     </Link>

@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased min-h-screen flex flex-col bg-white text-gray-900">
-        <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-50">
+        <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-[85]">
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <Link href="/" className="text-xl font-bold text-teal-600">
