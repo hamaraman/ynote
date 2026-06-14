@@ -114,6 +114,17 @@ export async function getPolicies(
     params: GetPoliciesParams = {},
     revalidateSec = 60 * 60 * 6 // 6시간마다 갱신
 ): Promise<YouthApiResponse> {
+    if (!API_KEY) {
+        console.warn("WARNING: YOUTH_API_KEY is not defined. Returning empty policy list.");
+        return {
+            resultCode: -1,
+            resultMessage: "YOUTH_API_KEY is not defined",
+            result: {
+                pagging: { totCount: 0, pageNum: 1, pageSize: params.pageSize ?? 10 },
+                youthPolicyList: []
+            }
+        };
+    }
     const url = buildUrl({ ...params, pageType: "1" });
     const res = await fetch(url, { next: { revalidate: revalidateSec } });
 
@@ -136,6 +147,10 @@ export async function getPoliciesByCategory(
 
 /** 정책 상세 조회 (pageType=2, plcyNo 지정) */
 export async function getPolicyDetail(plcyNo: string): Promise<YouthPolicy | null> {
+    if (!API_KEY) {
+        console.warn("WARNING: YOUTH_API_KEY is not defined. Returning null policy detail.");
+        return null;
+    }
     const url = buildUrl({ plcyNo, pageType: "2", pageSize: 1, pageNum: 1 });
     const res = await fetch(url, { next: { revalidate: 60 * 60 * 6 } });
 
