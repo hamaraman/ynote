@@ -101,6 +101,12 @@ export default function MobileNav() {
                             >
                                 🔍 정책 검색
                             </Link>
+                            <Link
+                                href="/bookmarks"
+                                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700 font-semibold text-teal-600 dark:text-teal-400"
+                            >
+                                🔖 저장한 정책
+                            </Link>
                             <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
                             <div className="px-4 py-2 text-xs text-gray-500 font-medium uppercase tracking-wider dark:text-gray-400">
                                 카테고리

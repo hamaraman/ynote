@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllPolicySlugs, getPolicyBySlug } from "@/lib/posts";
 import { getPolicyDetail, getPoliciesByCategory, formatYmd } from "@/lib/youthApi";
+import BookmarkButton from "@/components/BookmarkButton";
 
 function isPlcyNo(slug: string): boolean {
     return /^\d{10,}/.test(slug);
@@ -106,13 +107,22 @@ export default async function PolicyPage({
     if (markdownPolicy) {
         return (
             <article className="max-w-3xl mx-auto px-4 py-12">
-                <div className="mb-4">
+                <div className="mb-4 flex justify-between items-center">
                     <Link
                         href={`/category/${markdownPolicy.categorySlug}`}
                         className="text-sm text-teal-600 hover:underline"
                     >
                         ← {markdownPolicy.category}
                     </Link>
+                    <BookmarkButton policy={{
+                        id: slug,
+                        type: "markdown",
+                        title: markdownPolicy.title,
+                        description: markdownPolicy.description || "",
+                        categorySlug: markdownPolicy.categorySlug,
+                        categoryName: markdownPolicy.category,
+                        aplyYmd: markdownPolicy.date
+                    }} />
                 </div>
                 <div className="bg-teal-50 rounded-xl p-4 mb-8">
                     <div className="flex flex-wrap gap-6">
@@ -165,10 +175,20 @@ export default async function PolicyPage({
     return (
         <article className="max-w-4xl mx-auto px-4 py-12">
             {/* 헤더 */}
-            <div className="mb-6">
+            <div className="mb-6 flex justify-between items-center">
                 <Link href={`/category/${catSlug}`} className="text-sm text-teal-600 hover:underline">
                     ← {catName}
                 </Link>
+                <BookmarkButton policy={{
+                    id: slug,
+                    type: "api",
+                    title: apiPolicy.plcyNm,
+                    description: apiPolicy.plcyExplnCn,
+                    categorySlug: catSlug,
+                    categoryName: catName,
+                    aplyYmd: apiPolicy.aplyYmd || "상시 신청",
+                    sprvsnInstCdNm: apiPolicy.sprvsnInstCdNm
+                }} />
             </div>
 
             <div className="bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl p-6 md:p-8 text-white mb-8">
