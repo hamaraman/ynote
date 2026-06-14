@@ -52,7 +52,6 @@ html {
 html.dark .border-gray-200 { border-color: #334155; }
 html.dark .border-gray-100 { border-color: #1e293b; }
 html.dark .bg-white { background-color: #1e293b; }
-html.dark .bg-black { background-color: #f8fafc; }
 html.dark .text-white { color: #f8fafc; }
 html.dark .text-gray-900 { color: #f1f5f9; }
 html.dark .text-gray-800 { color: #e2e8f0; }
