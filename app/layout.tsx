@@ -35,7 +35,6 @@ export default function RootLayout({
                 📒 청년노트
               </Link>
               <div className="flex items-center gap-3">
-                <ThemeToggle />
                 <MobileNav />
                 <nav className="hidden md:flex gap-1 items-center">
                   <Link
@@ -60,6 +59,10 @@ export default function RootLayout({
         </header>
 
         <main className="flex-1">{children}</main>
+
+        <div className="fixed bottom-6 right-6 z-50">
+          <ThemeToggle />
+        </div>
 
         <footer className="border-t border-gray-200 mt-16">
           <div className="max-w-5xl mx-auto px-4 py-8 text-sm text-gray-600">
