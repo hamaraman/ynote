@@ -24,9 +24,9 @@ export default function ThemeToggle() {
 
     if (!mounted) {
         return (
-            <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white">
+            <button className="w-12 h-12 flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg dark:bg-slate-800 dark:border-slate-700">
                 <span className="sr-only">테마 전환</span>
-                <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <circle cx="12" cy="12" r="4" strokeWidth={2} />
                 </svg>
             </button>
@@ -36,7 +36,7 @@ export default function ThemeToggle() {
     return (
         <button
             onClick={toggle}
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 transition"
+            className="w-12 h-12 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100 shadow-lg transition-all hover:shadow-xl active:scale-95 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700"
             aria-label={isDark ? "라이트 모드로 전환" : "다크 모드로 전환"}
         >
             {isDark ? (
