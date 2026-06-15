@@ -42,10 +42,36 @@ export default function RootLayout({
         <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-[85]">
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
-              <Link href="/" className="text-xl font-bold text-teal-600">
-                📒 청년노트
-              </Link>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4 md:gap-6">
+                <Link href="/" className="text-xl font-bold text-teal-600 flex-shrink-0">
+                  📒 청년노트
+                </Link>
+                {/* Desktop Global Search Bar */}
+                <form action="/search" method="get" className="hidden md:block">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="q"
+                      placeholder="정책 검색..."
+                      className="w-36 focus:w-48 px-3.5 py-1.5 pl-8 text-xs bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-1 focus:ring-teal-500 focus:bg-white dark:focus:bg-slate-900 transition-all duration-300 text-gray-800 dark:text-gray-100"
+                    />
+                    <svg className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </form>
+              </div>
+              <div className="flex items-center gap-2 md:gap-3">
+                {/* Mobile Global Search Icon */}
+                <Link
+                  href="/search"
+                  className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition"
+                  aria-label="정책 검색"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </Link>
                 <MobileNav />
                 <nav className="hidden md:flex gap-1 items-center">
                   <Link
