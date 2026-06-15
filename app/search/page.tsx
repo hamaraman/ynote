@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getPolicies } from "@/lib/youthApi";
 import PolicyCard from "@/components/PolicyCard";
 import SearchPolicyList from "@/components/SearchPolicyList";
+import { getAllPolicies } from "@/lib/posts";
 
 export const metadata: Metadata = {
     title: "정책 검색",
@@ -19,8 +20,21 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     let policies: Awaited<ReturnType<typeof getPolicies>>["result"]["youthPolicyList"] = [];
     let totalCount = 0;
+    let localMatches: ReturnType<typeof getAllPolicies> = [];
 
     if (query) {
+        // 1. 로컬 마크다운 가이드 글 검색
+        try {
+            localMatches = getAllPolicies().filter(
+                (p) =>
+                    p.title.toLowerCase().includes(query.toLowerCase()) ||
+                    (p.description && p.description.toLowerCase().includes(query.toLowerCase()))
+            );
+        } catch {
+            localMatches = [];
+        }
+
+        // 2. 실시간 정부 정책 API 검색
         try {
             const data = await getPolicies({ plcyNm: query, pageSize: 12 }, 60 * 30);
             policies = data.result?.youthPolicyList ?? [];
@@ -57,29 +71,61 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
             {query && (
                 <div className="mb-6">
-                    <p className="text-gray-600">
-                        <strong>"{query}"</strong> 검색 결과: {totalCount.toLocaleString()}건
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                        <strong>&ldquo;{query}&rdquo;</strong> 검색 결과: {(totalCount + localMatches.length).toLocaleString()}건
                     </p>
                 </div>
             )}
 
-            {policies.length > 0 ? (
-                <SearchPolicyList
-                    initialPolicies={policies}
-                    query={query}
-                    initialTotalCount={totalCount}
-                />
+            {(localMatches.length > 0 || policies.length > 0) ? (
+                <div className="space-y-10">
+                    {/* 1. 로컬 추천 가이드 영역 */}
+                    {localMatches.length > 0 && (
+                        <div>
+                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-1.5">
+                                <span>📖</span> 추천 읽어보기 ({localMatches.length}건)
+                            </h2>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {localMatches.map((p) => (
+                                    <PolicyCard key={p.slug} policy={p} isMarkdown={true} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. 실시간 정부 정책 영역 */}
+                    {policies.length > 0 ? (
+                        <div>
+                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-1.5">
+                                <span>📋</span> 실시간 정부 정책 ({totalCount.toLocaleString()}건)
+                            </h2>
+                            <SearchPolicyList
+                                initialPolicies={policies}
+                                query={query}
+                                initialTotalCount={totalCount}
+                            />
+                        </div>
+                    ) : (
+                        query && (
+                            <div className="bg-gray-50 dark:bg-slate-800/30 rounded-2xl p-6 text-center">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    실시간 정부 정책에 대한 추가 검색 결과가 없습니다.
+                                </p>
+                            </div>
+                        )
+                    )}
+                </div>
             ) : query ? (
-                <div className="bg-gray-50 rounded-xl p-12 text-center">
-                    <p className="text-gray-500 mb-4">검색 결과가 없습니다.</p>
-                    <p className="text-sm text-gray-400">
+                <div className="bg-gray-50 dark:bg-slate-800/40 rounded-2xl p-12 text-center">
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">검색 결과가 없습니다.</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
                         다른 키워드로 검색하거나 카테고리를 확인해보세요.
                     </p>
                 </div>
             ) : (
-                <div className="bg-gray-50 rounded-xl p-12 text-center">
-                    <p className="text-gray-500">검색어를 입력해주세요.</p>
-                    <p className="text-sm text-gray-400 mt-2">
+                <div className="bg-gray-50 dark:bg-slate-800/40 rounded-2xl p-12 text-center">
+                    <p className="text-gray-500 dark:text-gray-400">검색어를 입력해주세요.</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
                         예: 청년도약계좌, 월세지원, 내일배움카드, 문화패스
                     </p>
                 </div>
