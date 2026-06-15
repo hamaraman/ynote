@@ -43,7 +43,7 @@ export default async function CategoryPage({
     if (!cat) notFound();
 
     const markdownPolicies = getAllPolicies().filter((p) => p.categorySlug === slug);
-    const apiData = await getPoliciesByCategory(slug, 1, 12);
+    const apiData = await getPoliciesByCategory(slug, 1, 24);
     const apiPolicies = apiData.result?.youthPolicyList ?? [];
     const totalCount = apiData.result?.pagging?.totCount ?? apiPolicies.length;
 

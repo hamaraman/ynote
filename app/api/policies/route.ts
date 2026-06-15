@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category");
     const keyword = searchParams.get("q") ?? undefined;
     const pageNum = Number(searchParams.get("page") ?? "1");
-    const pageSize = Number(searchParams.get("size") ?? "12");
+    const pageSize = Number(searchParams.get("size") ?? "24");
 
     try {
         const data = category

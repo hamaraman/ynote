@@ -36,7 +36,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         // 2. 실시간 정부 정책 API 검색
         try {
-            const data = await getPolicies({ plcyNm: query, pageSize: 12 }, 60 * 30);
+            const data = await getPolicies({ plcyNm: query, pageSize: 24 }, 60 * 30);
             policies = data.result?.youthPolicyList ?? [];
             totalCount = data.result?.pagging?.totCount ?? 0;
         } catch {

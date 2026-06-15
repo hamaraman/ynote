@@ -26,7 +26,7 @@ export default function SearchPolicyList({
 
         try {
             const nextPage = page + 1;
-            const res = await fetch(`/api/policies?q=${encodeURIComponent(query)}&page=${nextPage}&size=12`);
+            const res = await fetch(`/api/policies?q=${encodeURIComponent(query)}&page=${nextPage}&size=24`);
             if (!res.ok) throw new Error("정책을 불러오는 데 실패했습니다.");
 
             const data = (await res.json()) as YouthApiResponse;

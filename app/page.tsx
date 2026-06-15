@@ -18,7 +18,7 @@ const popular = [
 ];
 
 export default async function Home() {
-    const apiData = await getPolicies({}, 60 * 30);
+    const apiData = await getPolicies({ pageSize: 24 }, 60 * 30);
     const recentPolicies = apiData.result?.youthPolicyList ?? [];
     const totalCount = apiData.result?.pagging?.totCount ?? 0;
 
@@ -100,7 +100,7 @@ export default async function Home() {
                         </Link>
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {recentPolicies.slice(0, 8).map((p) => (
+                        {recentPolicies.map((p) => (
                             <PolicyCard key={p.plcyNo} policy={p} />
                         ))}
                     </div>
