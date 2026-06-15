@@ -15,7 +15,15 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(git rebase *)"
+      "Bash(git rebase *)",
+      "Bash(taskkill /F /PID 19448)",
+      "Bash(taskkill /F /PID 17512)",
+      "Bash(netstat -ano)",
+      "Bash(rm -rf .next)",
+      "Bash(curl -v http://localhost:3000)",
+      "Bash(pkill -9 -f \"next\")",
+      "Bash(powershell -Command \"Stop-Process -Id 17512 -Force\")",
+      "Bash(curl -s http://localhost:3003)"
     ]
   }
 }

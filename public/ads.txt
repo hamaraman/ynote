@@ -1,0 +1,2 @@
+# 구글 애드센스 승인 후 아래 형식에 맞추어 본인의 퍼블리셔 ID로 변경해 주세요.
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

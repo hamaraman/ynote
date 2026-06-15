@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type BookmarkedPolicy } from "@/components/BookmarkButton";
+import PolicyCard from "@/components/PolicyCard";
 
 export default function BookmarksPage() {
     const [bookmarks, setBookmarks] = useState<BookmarkedPolicy[]>([]);
@@ -12,15 +13,14 @@ export default function BookmarksPage() {
         setMounted(true);
         const saved = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
         setBookmarks(saved);
-    }, []);
 
-    const removeBookmark = (id: string) => {
-        const updated = bookmarks.filter((b) => b.id !== id);
-        localStorage.setItem("bookmarks", JSON.stringify(updated));
-        setBookmarks(updated);
-        // Dispatch custom event to notify other components
-        window.dispatchEvent(new Event("bookmarks-updated"));
-    };
+        const handleUpdate = () => {
+            const updated = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
+            setBookmarks(updated);
+        };
+        window.addEventListener("bookmarks-updated", handleUpdate);
+        return () => window.removeEventListener("bookmarks-updated", handleUpdate);
+    }, []);
 
     if (!mounted) {
         return (
@@ -75,53 +75,7 @@ export default function BookmarksPage() {
             ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {bookmarks.map((policy) => (
-                        <div
-                            key={policy.id}
-                            className="bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between h-full dark:bg-slate-800 dark:border-slate-700"
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-xs px-2.5 py-1 bg-teal-50 text-teal-700 rounded-full font-medium dark:bg-teal-900/50 dark:text-teal-300">
-                                        {policy.categoryName}
-                                    </span>
-                                    <button
-                                        onClick={() => removeBookmark(policy.id)}
-                                        className="text-gray-400 hover:text-rose-500 p-1.5 rounded-full hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
-                                        title="북마크 해제"
-                                    >
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                            />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <Link href={`/policy/${policy.id}`} className="block group mb-4">
-                                    <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition line-clamp-2 mb-2">
-                                        {policy.title}
-                                    </h2>
-                                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
-                                        {policy.description}
-                                    </p>
-                                </Link>
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-auto pt-3 border-t border-gray-100 dark:border-slate-700">
-                                <span>📅 {policy.aplyYmd}</span>
-                                {policy.sprvsnInstCdNm && (
-                                    <span className="line-clamp-1 max-w-[120px]">
-                                        🏛️ {policy.sprvsnInstCdNm}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
+                        <PolicyCard key={policy.id} policy={policy} />
                     ))}
                 </div>
             )}

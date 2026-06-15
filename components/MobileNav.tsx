@@ -14,7 +14,11 @@ const categories = [
     { name: "지역별", href: "/category/region", icon: "📍" },
 ];
 
-export default function MobileNav() {
+interface MobileNavProps {
+    onOpenChange?: (isOpen: boolean) => void;
+}
+
+export default function MobileNav({ onOpenChange }: MobileNavProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
@@ -25,7 +29,19 @@ export default function MobileNav() {
 
     useEffect(() => {
         setIsOpen(false);
-    }, [pathname]);
+        onOpenChange?.(false);
+    }, [pathname, onOpenChange]);
+
+    const toggleMenu = () => {
+        const newState = !isOpen;
+        setIsOpen(newState);
+        onOpenChange?.(newState);
+    };
+
+    const closeMenu = () => {
+        setIsOpen(false);
+        onOpenChange?.(false);
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -42,7 +58,7 @@ export default function MobileNav() {
         <>
             {/* Mobile Navigation Toggle */}
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={toggleMenu}
                 className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-manipulation"
                 aria-label={isOpen ? "메뉴 닫기" : "메뉴 열기"}
                 aria-expanded={isOpen}
@@ -65,7 +81,7 @@ export default function MobileNav() {
                     {isOpen && (
                         <div
                             className="fixed inset-0 bg-black/50 z-[70] transition-opacity"
-                            onClick={() => setIsOpen(false)}
+                            onClick={closeMenu}
                         />
                     )}
 
@@ -79,7 +95,7 @@ export default function MobileNav() {
                             <div className="flex items-center justify-between">
                                 <span className="text-lg font-bold text-teal-600 dark:text-teal-400">📒 메뉴</span>
                                 <button
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={closeMenu}
                                     className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,18 +107,21 @@ export default function MobileNav() {
                         <nav className="p-4 bg-white dark:bg-slate-800 h-[calc(100%-73px)] overflow-y-auto">
                             <Link
                                 href="/"
+                                onClick={closeMenu}
                                 className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                             >
                                 🏠 홈
                             </Link>
                             <Link
                                 href="/search"
+                                onClick={closeMenu}
                                 className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                             >
                                 🔍 정책 검색
                             </Link>
                             <Link
                                 href="/bookmarks"
+                                onClick={closeMenu}
                                 className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700 font-semibold text-teal-600 dark:text-teal-400"
                             >
                                 🔖 저장한 정책
@@ -115,6 +134,7 @@ export default function MobileNav() {
                                 <Link
                                     key={c.href}
                                     href={c.href}
+                                    onClick={closeMenu}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
                                         pathname === c.href
                                             ? "bg-teal-50 text-teal-700 font-medium dark:bg-teal-900/50 dark:text-teal-300"
@@ -128,12 +148,14 @@ export default function MobileNav() {
                             <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
                             <Link
                                 href="/about"
+                                onClick={closeMenu}
                                 className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                             >
                                 ℹ️ 사이트 소개
                             </Link>
                             <Link
                                 href="/contact"
+                                onClick={closeMenu}
                                 className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition dark:text-gray-200 dark:hover:bg-slate-700"
                             >
                                 ✉️ 문의하기

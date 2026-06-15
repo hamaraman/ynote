@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getPolicies } from "@/lib/youthApi";
-import { formatYmd } from "@/lib/youthApi";
+import PolicyCard from "@/components/PolicyCard";
 
 export const metadata: Metadata = {
     title: "정책 검색",
@@ -63,52 +63,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             )}
 
             {policies.length > 0 ? (
-                <ul className="space-y-4">
-                    {policies.map((p) => {
-                        const keywords = p.plcyKywdNm?.split(",").filter(Boolean).slice(0, 3) || [];
-                        return (
-                            <li key={p.plcyNo}>
-                                <Link
-                                    href={`/policy/${p.plcyNo}`}
-                                    className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
-                                >
-                                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                                        <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full">
-                                            {p.lclsfNm || "전체"}
-                                        </span>
-                                        {p.mclsfNm && (
-                                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                                                {p.mclsfNm}
-                                            </span>
-                                        )}
-                                        {keywords.map((kw, i) => (
-                                            <span key={i} className="text-xs px-2 py-1 bg-teal-50 text-teal-600 rounded-full">
-                                                {kw.trim()}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <h2 className="text-lg font-semibold mb-2 line-clamp-2">{p.plcyNm}</h2>
-                                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                                        {p.plcyExplnCn}
-                                    </p>
-                                    {p.plcySprtCn && (
-                                        <div className="bg-amber-50 rounded-lg p-3 mb-3">
-                                            <p className="text-xs text-amber-800 font-medium mb-1">💰 지원 내용</p>
-                                            <p className="text-sm text-gray-700 line-clamp-2">{p.plcySprtCn}</p>
-                                        </div>
-                                    )}
-                                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
-                                        <span>📅 {p.aplyYmd || "상시 신청"}</span>
-                                        {p.sprvsnInstCdNm && <span>🏛️ {p.sprvsnInstCdNm}</span>}
-                                        {p.sprtTrgtAgeLmtYn === "Y" && p.sprtTrgtMinAge && (
-                                            <span>👤 만 {p.sprtTrgtMinAge}{p.sprtTrgtMaxAge ? `~${p.sprtTrgtMaxAge}` : ""}세</span>
-                                        )}
-                                    </div>
-                                </Link>
-                            </li>
-                        );
-                    })}
-                </ul>
+                <div className="grid md:grid-cols-2 gap-6">
+                    {policies.map((p) => (
+                        <PolicyCard key={p.plcyNo} policy={p} />
+                    ))}
+                </div>
             ) : query ? (
                 <div className="bg-gray-50 rounded-xl p-12 text-center">
                     <p className="text-gray-500 mb-4">검색 결과가 없습니다.</p>

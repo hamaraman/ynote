@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllPolicies } from "@/lib/posts";
-import { getPoliciesByCategory, type YouthPolicy } from "@/lib/youthApi";
+import { getPoliciesByCategory } from "@/lib/youthApi";
+import PolicyCard from "@/components/PolicyCard";
 
 const categories = {
     finance: { name: "금융/자산", icon: "💰", description: "청년도약계좌, 청약통장, 소득공제펀드 등 자산 형성에 도움 되는 정책" },
@@ -29,70 +30,6 @@ export async function generateMetadata({
         title: cat.name,
         description: `${cat.name} 카테고리 - ${cat.description}`,
     };
-}
-
-function MarkdownPolicyCard({ policy }: { policy: ReturnType<typeof getAllPolicies>[number] }) {
-    return (
-        <Link
-            href={`/policy/${policy.slug}`}
-            className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
-        >
-            <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full">
-                    읽어보기
-                </span>
-            </div>
-            <h2 className="font-semibold mb-2">{policy.title}</h2>
-            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{policy.description}</p>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
-                <span>📅 {policy.date}</span>
-                {policy.updated && policy.updated !== policy.date && (
-                    <span>업데이트: {policy.updated}</span>
-                )}
-            </div>
-        </Link>
-    );
-}
-
-function ApiPolicyCard({ policy }: { policy: YouthPolicy }) {
-    const keywords = policy.plcyKywdNm?.split(",").filter(Boolean).slice(0, 3) || [];
-
-    return (
-        <Link
-            href={`/policy/${policy.plcyNo}`}
-            className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition"
-        >
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-                {policy.mclsfNm && (
-                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                        {policy.mclsfNm}
-                    </span>
-                )}
-                {keywords.map((kw, i) => (
-                    <span key={i} className="text-xs px-2 py-1 bg-teal-50 text-teal-600 rounded-full">
-                        {kw.trim()}
-                    </span>
-                ))}
-            </div>
-            <h2 className="font-semibold mb-2 line-clamp-2">{policy.plcyNm}</h2>
-            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{policy.plcyExplnCn}</p>
-            {policy.plcySprtCn && (
-                <div className="bg-amber-50 rounded-lg p-3 mb-3">
-                    <p className="text-xs text-amber-800 font-medium mb-1">💰 지원 내용</p>
-                    <p className="text-sm text-gray-700 line-clamp-2">{policy.plcySprtCn}</p>
-                </div>
-            )}
-            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                <span>📅 {policy.aplyYmd || "상시 신청"}</span>
-                {policy.sprvsnInstCdNm && (
-                    <span>🏛️ {policy.sprvsnInstCdNm}</span>
-                )}
-                {policy.sprtTrgtAgeLmtYn === "Y" && policy.sprtTrgtMinAge && (
-                    <span>👤 만 {policy.sprtTrgtMinAge}{policy.sprtTrgtMaxAge ? `~${policy.sprtTrgtMaxAge}` : ""}세</span>
-                )}
-            </div>
-        </Link>
-    );
 }
 
 export default async function CategoryPage({
@@ -133,9 +70,9 @@ export default async function CategoryPage({
                             <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
                                 📖 읽어보기 ({markdownPolicies.length}개)
                             </h2>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {markdownPolicies.map((p) => (
-                                    <MarkdownPolicyCard key={p.slug} policy={p} />
+                                    <PolicyCard key={p.slug} policy={p} isMarkdown={true} />
                                 ))}
                             </div>
                         </section>
@@ -146,9 +83,9 @@ export default async function CategoryPage({
                             <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
                                 📋 정부 정책 ({totalCount.toLocaleString()}건)
                             </h2>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {apiPolicies.map((p) => (
-                                    <ApiPolicyCard key={p.plcyNo} policy={p} />
+                                    <PolicyCard key={p.plcyNo} policy={p} />
                                 ))}
                             </div>
                             <div className="mt-8 text-center">

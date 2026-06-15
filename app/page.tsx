@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPolicies } from "@/lib/youthApi";
+import PolicyCard from "@/components/PolicyCard";
 
 const categories = [
     { name: "금융/자산", href: "/category/finance", icon: "💰", desc: "청년도약계좌, 청약통장, 소득공제펀드", color: "bg-amber-50 hover:bg-amber-100" },
@@ -98,37 +99,10 @@ export default async function Home() {
                             더 많은 정책 보기 →
                         </Link>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {recentPolicies.slice(0, 8).map((p) => {
-                            const keywords = p.plcyKywdNm?.split(",").filter(Boolean).slice(0, 2) || [];
-                            return (
-                                <Link key={p.plcyNo} href={`/policy/${p.plcyNo}`} className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-md transition">
-                                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                                        <span className="text-xs px-2 py-1 bg-teal-100 text-teal-700 rounded-full">
-                                            {p.lclsfNm || "전체"}
-                                        </span>
-                                        {keywords.map((kw, i) => (
-                                            <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                                                {kw.trim()}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <h3 className="font-semibold mb-2 line-clamp-2">{p.plcyNm}</h3>
-                                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                                        {p.plcyExplnCn}
-                                    </p>
-                                    {p.plcySprtCn && (
-                                        <div className="bg-amber-50 rounded-lg p-2 mb-3">
-                                            <p className="text-xs text-amber-800 line-clamp-2">💰 {p.plcySprtCn}</p>
-                                        </div>
-                                    )}
-                                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                                        <span>📅 {p.aplyYmd || "상시 신청"}</span>
-                                        {p.sprvsnInstCdNm && <span>🏛️ {p.sprvsnInstCdNm}</span>}
-                                    </div>
-                                </Link>
-                            );
-                        })}
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {recentPolicies.slice(0, 8).map((p) => (
+                            <PolicyCard key={p.plcyNo} policy={p} />
+                        ))}
                     </div>
                 </section>
             )}
