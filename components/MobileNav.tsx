@@ -59,7 +59,7 @@ export default function MobileNav({ onOpenChange }: MobileNavProps) {
             {/* Mobile Navigation Toggle */}
             <button
                 onClick={toggleMenu}
-                className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-manipulation"
+                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-manipulation"
                 aria-label={isOpen ? "메뉴 닫기" : "메뉴 열기"}
                 aria-expanded={isOpen}
             >
@@ -87,7 +87,7 @@ export default function MobileNav({ onOpenChange }: MobileNavProps) {
 
                     {/* Mobile Menu Drawer */}
                     <div
-                        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[90] transform transition-transform duration-300 ease-out md:hidden dark:bg-slate-800 ${
+                        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[90] transform transition-transform duration-300 ease-out lg:hidden dark:bg-slate-800 ${
                             isOpen ? "translate-x-0" : "translate-x-full"
                         }`}
                     >

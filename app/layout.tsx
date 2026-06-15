@@ -42,12 +42,12 @@ export default function RootLayout({
         <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-[85]">
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
-              <div className="flex items-center gap-4 md:gap-6">
+              <div className="flex items-center gap-4 lg:gap-6">
                 <Link href="/" className="text-xl font-bold text-teal-600 flex-shrink-0">
                   📒 청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
-                <form action="/search" method="get" className="hidden md:block">
+                <form action="/search" method="get" className="hidden lg:block">
                   <div className="relative">
                     <input
                       type="text"
@@ -61,11 +61,11 @@ export default function RootLayout({
                   </div>
                 </form>
               </div>
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-2 lg:gap-3">
                 {/* Mobile Global Search Icon */}
                 <Link
                   href="/search"
-                  className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition"
+                  className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition"
                   aria-label="정책 검색"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,10 +73,10 @@ export default function RootLayout({
                   </svg>
                 </Link>
                 <MobileNav />
-                <nav className="hidden md:flex gap-1 items-center">
+                <nav className="hidden lg:flex gap-1 items-center">
                   <Link
                     href="/bookmarks"
-                    className="px-3 py-2 text-sm text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/30 rounded-md transition font-semibold mr-1.5 flex items-center gap-1 border border-teal-100 dark:border-teal-950/50"
+                    className="px-3 py-2 text-sm text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/30 rounded-md transition font-semibold mr-1.5 flex items-center gap-1 border border-teal-100 dark:border-teal-950/50 whitespace-nowrap flex-shrink-0"
                   >
                     🔖 저장함
                   </Link>
@@ -84,7 +84,7 @@ export default function RootLayout({
                     <Link
                       key={c.href}
                       href={c.href}
-                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition"
+                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition whitespace-nowrap flex-shrink-0"
                     >
                       {c.name}
                     </Link>
