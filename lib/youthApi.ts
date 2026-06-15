@@ -5,8 +5,7 @@
 
 const BASE_URL = "https://www.youthcenter.go.kr/go/ythip/getPlcy";
 
-// 인증키는 절대 NEXT_PUBLIC_ 접두사를 붙이지 않습니다(클라이언트 노출 방지).
-const API_KEY = process.env.YOUTH_API_KEY;
+const API_KEY = process.env.YOUTH_API_KEY || "f559e151-e1c7-4455-9ebf-9422fe4941b2";
 
 /** API 응답의 정책 1건 (출력결과 표 기준, 주요 필드 위주) */
 export interface YouthPolicy {
