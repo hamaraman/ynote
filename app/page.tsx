@@ -118,7 +118,7 @@ export default async function Home() {
                     {popular.map((p, idx) => {
                         const rankColors = [
                             "text-amber-500 bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/30",
-                            "text-slate-600 bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600",
+                            "text-slate-600 bg-slate-100 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 dark:text-slate-200",
                             "text-amber-700 bg-orange-50 dark:bg-orange-950/30 border-orange-100 dark:border-orange-900/30",
                         ];
                         const icons = ["🥇", "🥈", "🥉"];
