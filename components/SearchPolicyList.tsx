@@ -7,12 +7,16 @@ import PolicyCard from "./PolicyCard";
 interface SearchPolicyListProps {
     initialPolicies: YouthPolicy[];
     query: string;
+    region: string;
+    age?: number;
     initialTotalCount: number;
 }
 
 export default function SearchPolicyList({
     initialPolicies,
     query,
+    region,
+    age,
     initialTotalCount,
 }: SearchPolicyListProps) {
     const [policies, setPolicies] = useState<YouthPolicy[]>(initialPolicies);
@@ -26,11 +30,24 @@ export default function SearchPolicyList({
 
         try {
             const nextPage = page + 1;
-            const res = await fetch(`/api/policies?q=${encodeURIComponent(query)}&page=${nextPage}&size=24`);
+            const regionParam = region ? `&region=${region}` : "";
+            const res = await fetch(`/api/policies?q=${encodeURIComponent(query)}${regionParam}&page=${nextPage}&size=24`);
             if (!res.ok) throw new Error("정책을 불러오는 데 실패했습니다.");
 
             const data = (await res.json()) as YouthApiResponse;
-            const newPolicies = data.result?.youthPolicyList ?? [];
+            let newPolicies = data.result?.youthPolicyList ?? [];
+
+            // 나이 조건 필터링
+            if (age !== undefined) {
+                newPolicies = newPolicies.filter(p => {
+                    const minAge = p.sprtTrgtMinAge ? Number(p.sprtTrgtMinAge) : 0;
+                    const maxAge = p.sprtTrgtMaxAge ? Number(p.sprtTrgtMaxAge) : 99;
+                    if (p.sprtTrgtAgeLmtYn === "Y") {
+                        return age >= minAge && age <= maxAge;
+                    }
+                    return true;
+                });
+            }
 
             if (newPolicies.length > 0) {
                 setPolicies((prev) => [...prev, ...newPolicies]);

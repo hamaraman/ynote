@@ -73,6 +73,7 @@ export interface GetPoliciesParams {
     lclsfNm?: string; // 대분류 (콤마 구분)
     mclsfNm?: string; // 중분류 (콤마 구분)
     zipCd?: string; // 법정시군구코드 (콤마 구분)
+    srchPolyBizSecd?: string; // 지역코드 (콤마 구분)
 }
 
 /** site 카테고리 slug -> API 정책대분류명(lclsfNm) 매핑.
@@ -103,6 +104,7 @@ function buildUrl(params: GetPoliciesParams & { plcyNo?: string; pageType?: "1" 
     if (params.lclsfNm) sp.set("lclsfNm", params.lclsfNm);
     if (params.mclsfNm) sp.set("mclsfNm", params.mclsfNm);
     if (params.zipCd) sp.set("zipCd", params.zipCd);
+    if (params.srchPolyBizSecd) sp.set("srchPolyBizSecd", params.srchPolyBizSecd);
 
     return `${BASE_URL}?${sp.toString()}`;
 }

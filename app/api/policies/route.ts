@@ -5,19 +5,25 @@
 // 인증키는 서버에만 머무르므로 안전합니다.
 
 import { NextRequest, NextResponse } from "next/server";
-import { getPolicies, getPoliciesByCategory } from "@/lib/youthApi";
+import { getPolicies, CATEGORY_TO_LCLSF } from "@/lib/youthApi";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
     const keyword = searchParams.get("q") ?? undefined;
+    const region = searchParams.get("region") ?? undefined;
     const pageNum = Number(searchParams.get("page") ?? "1");
     const pageSize = Number(searchParams.get("size") ?? "24");
 
     try {
-        const data = category
-            ? await getPoliciesByCategory(category, pageNum, pageSize)
-            : await getPolicies({ plcyNm: keyword, pageNum, pageSize });
+        const lclsfNm = category ? CATEGORY_TO_LCLSF[category] : undefined;
+        const data = await getPolicies({
+            plcyNm: keyword || undefined,
+            lclsfNm,
+            srchPolyBizSecd: region || undefined,
+            pageNum,
+            pageSize
+        });
 
         return NextResponse.json(data, {
             headers: { "Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400" },
