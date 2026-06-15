@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getAllPolicies } from "@/lib/posts";
 import { getPoliciesByCategory } from "@/lib/youthApi";
 import PolicyCard from "@/components/PolicyCard";
+import CategoryPolicyList from "@/components/CategoryPolicyList";
 
 const categories = {
     finance: { name: "금융/자산", icon: "💰", description: "청년도약계좌, 청약통장, 소득공제펀드 등 자산 형성에 도움 되는 정책" },
@@ -42,7 +43,7 @@ export default async function CategoryPage({
     if (!cat) notFound();
 
     const markdownPolicies = getAllPolicies().filter((p) => p.categorySlug === slug);
-    const apiData = await getPoliciesByCategory(slug, 1, 24);
+    const apiData = await getPoliciesByCategory(slug, 1, 12);
     const apiPolicies = apiData.result?.youthPolicyList ?? [];
     const totalCount = apiData.result?.pagging?.totCount ?? apiPolicies.length;
 
@@ -83,19 +84,11 @@ export default async function CategoryPage({
                             <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
                                 📋 정부 정책 ({totalCount.toLocaleString()}건)
                             </h2>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {apiPolicies.map((p) => (
-                                    <PolicyCard key={p.plcyNo} policy={p} />
-                                ))}
-                            </div>
-                            <div className="mt-8 text-center">
-                                <Link
-                                    href={`/search`}
-                                    className="inline-block px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition"
-                                >
-                                    더 많은 정책 검색하기
-                                </Link>
-                            </div>
+                            <CategoryPolicyList
+                                initialPolicies={apiPolicies}
+                                categorySlug={slug}
+                                initialTotalCount={totalCount}
+                            />
                         </section>
                     )}
                 </>

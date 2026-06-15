@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getPolicies } from "@/lib/youthApi";
 import PolicyCard from "@/components/PolicyCard";
+import SearchPolicyList from "@/components/SearchPolicyList";
 
 export const metadata: Metadata = {
     title: "정책 검색",
@@ -21,7 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     if (query) {
         try {
-            const data = await getPolicies({ plcyNm: query }, 60 * 30);
+            const data = await getPolicies({ plcyNm: query, pageSize: 12 }, 60 * 30);
             policies = data.result?.youthPolicyList ?? [];
             totalCount = data.result?.pagging?.totCount ?? 0;
         } catch {
@@ -63,11 +64,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             )}
 
             {policies.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                    {policies.map((p) => (
-                        <PolicyCard key={p.plcyNo} policy={p} />
-                    ))}
-                </div>
+                <SearchPolicyList
+                    initialPolicies={policies}
+                    query={query}
+                    initialTotalCount={totalCount}
+                />
             ) : query ? (
                 <div className="bg-gray-50 rounded-xl p-12 text-center">
                     <p className="text-gray-500 mb-4">검색 결과가 없습니다.</p>
