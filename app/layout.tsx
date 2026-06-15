@@ -38,12 +38,12 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="antialiased min-h-screen flex flex-col bg-white text-gray-900">
-        <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur z-[85]">
+      <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-gray-900 dark:text-gray-100">
+        <header className="border-b border-gray-200 dark:border-slate-800 sticky top-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur z-[85]">
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-4 lg:gap-6">
-                <Link href="/" className="text-xl font-bold text-teal-600 flex-shrink-0">
+                <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0">
                   📒 청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
@@ -84,7 +84,7 @@ export default function RootLayout({
                     <Link
                       key={c.href}
                       href={c.href}
-                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition whitespace-nowrap flex-shrink-0"
+                      className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition whitespace-nowrap flex-shrink-0"
                     >
                       {c.name}
                     </Link>
@@ -101,17 +101,38 @@ export default function RootLayout({
           <ThemeToggle />
         </div>
 
-        <footer className="border-t border-gray-200 mt-16">
-          <div className="max-w-5xl mx-auto px-4 py-8 text-sm text-gray-600">
-            <div className="flex flex-wrap gap-4 mb-4">
-              <Link href="/about" className="hover:text-teal-600">사이트 소개</Link>
-              <Link href="/contact" className="hover:text-teal-600">문의</Link>
-              <Link href="/privacy" className="hover:text-teal-600">개인정보처리방침</Link>
-              <Link href="/terms" className="hover:text-teal-600">이용약관</Link>
+        <footer className="border-t border-gray-200 dark:border-slate-800 mt-16 bg-gray-50 dark:bg-slate-950">
+          <div className="max-w-5xl mx-auto px-4 py-12 text-sm text-gray-600 dark:text-gray-400">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <Link href="/" className="text-lg font-bold text-teal-600 dark:text-teal-400 mb-4 block">
+                  📒 청년노트
+                </Link>
+                <p className="max-w-xs leading-relaxed">
+                  청년들에게 꼭 필요한 정부 정책과 혜택을 쉽고 친근하게 전달하는 정책 가이드 서비스입니다.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-x-8 gap-y-4">
+                <div className="flex flex-col gap-2">
+                  <h4 className="font-bold text-gray-900 dark:text-gray-200 mb-1">서비스</h4>
+                  <Link href="/about" className="hover:text-teal-600 dark:hover:text-teal-400">사이트 소개</Link>
+                  <Link href="/bookmarks" className="hover:text-teal-600 dark:hover:text-teal-400">저장한 정책</Link>
+                  <Link href="/search" className="hover:text-teal-600 dark:hover:text-teal-400">정책 검색</Link>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <h4 className="font-bold text-gray-900 dark:text-gray-200 mb-1">고객지원</h4>
+                  <Link href="/contact" className="hover:text-teal-600 dark:hover:text-teal-400">문의하기</Link>
+                  <Link href="/privacy" className="hover:text-teal-600 dark:hover:text-teal-400">개인정보처리방침</Link>
+                  <Link href="/terms" className="hover:text-teal-600 dark:hover:text-teal-400">이용약관</Link>
+                </div>
+              </div>
             </div>
-            <p className="text-gray-500">
-              © 2026 청년노트. 정책 정보는 공식 출처 기반이며, 정확한 내용은 해당 기관에서 확인하세요.
-            </p>
+            <div className="pt-8 border-t border-gray-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+              <p>© 2026 청년노트. 정책 정보는 공식 출처 기반이며, 정확한 내용은 해당 기관에서 확인하세요.</p>
+              <div className="flex gap-4">
+                <span className="text-gray-400">Powered by 온통청년 API</span>
+              </div>
+            </div>
           </div>
         </footer>
       </body>

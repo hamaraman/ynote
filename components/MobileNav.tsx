@@ -59,7 +59,7 @@ export default function MobileNav({ onOpenChange }: MobileNavProps) {
             {/* Mobile Navigation Toggle */}
             <button
                 onClick={toggleMenu}
-                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition touch-manipulation"
+                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition touch-manipulation"
                 aria-label={isOpen ? "메뉴 닫기" : "메뉴 열기"}
                 aria-expanded={isOpen}
             >

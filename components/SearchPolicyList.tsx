@@ -92,12 +92,12 @@ export default function SearchPolicyList({
 
             {/* 더 보기 버튼 */}
             {hasMore && !loading && (
-                <div className="text-center pt-4">
+                <div className="text-center pt-8">
                     <button
                         onClick={loadMore}
-                        className="px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl hover:shadow-[0_8px_25px_rgba(13,148,136,0.25)] active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                        className="px-10 py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 cursor-pointer text-sm"
                     >
-                        더 많은 정책 보기 ⤓
+                        더 많은 정책 불러오기 ⤓
                     </button>
                 </div>
             )}

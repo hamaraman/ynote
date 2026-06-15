@@ -99,32 +99,32 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-12">
-            <Link href="/" className="text-sm text-teal-600 hover:underline">
-                ← 홈
+            <Link href="/" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
+                <span>←</span> 홈
             </Link>
-            <h1 className="text-3xl font-bold mt-4 mb-8 text-gray-900 dark:text-gray-100">맞춤 정책 찾기</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mt-4 mb-8 text-gray-900 dark:text-gray-100 tracking-tight">맞춤 정책 찾기</h1>
 
             {/* 필터 폼 */}
-            <form method="get" action="/search" className="bg-gray-50 dark:bg-slate-900 border border-gray-150 dark:border-slate-800/80 rounded-2xl p-5 md:p-6 mb-8 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <form method="get" action="/search" className="bg-gray-50 dark:bg-slate-900/50 border border-gray-150 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 mb-10 space-y-6 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* 키워드 검색 */}
                     <div className="md:col-span-1">
-                        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">검색어</label>
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">검색어</label>
                         <input
                             type="text"
                             name="q"
                             defaultValue={query}
                             placeholder="예: 청년, 월세, 대출"
-                            className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm transition-all"
                         />
                     </div>
                     {/* 지역 선택 */}
                     <div>
-                        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">거주 지역</label>
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">거주 지역</label>
                         <select
                             name="region"
                             defaultValue={regionCode}
-                            className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-850 dark:text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm cursor-pointer"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm cursor-pointer appearance-none transition-all"
                         >
                             <option value="">전체 지역</option>
                             {REGIONS.map((r) => (
@@ -134,7 +134,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     </div>
                     {/* 나이 입력 */}
                     <div>
-                        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">만 나이 (숫자만)</label>
+                        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">만 나이 (숫자만)</label>
                         <input
                             type="number"
                             name="age"
@@ -142,35 +142,44 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                             placeholder="예: 25"
                             min="0"
                             max="100"
-                            className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm transition-all"
                         />
                     </div>
                 </div>
                 <div className="flex justify-end pt-2">
                     <button
                         type="submit"
-                        className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition shadow-sm hover:shadow active:scale-95 text-sm w-full md:w-auto cursor-pointer"
+                        className="px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold transition shadow-md hover:shadow-lg active:scale-[0.98] text-sm w-full md:w-auto cursor-pointer flex items-center justify-center gap-2"
                     >
-                        조건 검색하기 🔍
+                        <span>조건 검색하기</span>
+                        <span className="text-base">🔍</span>
                     </button>
                 </div>
             </form>
 
             {hasFilters && (
-                <div className="mb-6">
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">
-                        조건에 따른 정책 검색 결과: <strong className="text-teal-600 dark:text-teal-400">{displayCount.toLocaleString()}건</strong>
+                <div className="mb-8 flex items-center justify-between">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        조건에 따른 정책 검색 결과: <strong className="text-teal-600 dark:text-teal-400 font-bold">{displayCount.toLocaleString()}건</strong>
                     </p>
+                    {displayCount > 0 && (
+                        <button 
+                            onClick={() => window.location.href = '/search'}
+                            className="text-xs text-gray-500 hover:text-teal-600 dark:text-gray-500 dark:hover:text-teal-400 transition"
+                        >
+                            필터 초기화
+                        </button>
+                    )}
                 </div>
             )}
 
             {(localMatches.length > 0 || policies.length > 0) ? (
-                <div className="space-y-10">
+                <div className="space-y-12">
                     {/* 1. 로컬 추천 가이드 영역 */}
                     {localMatches.length > 0 && (
                         <div>
-                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-1.5 text-gray-800 dark:text-gray-100">
-                                <span>📖</span> 추천 읽어보기 ({localMatches.length}건)
+                            <h2 className="text-lg font-bold mb-6 pb-3 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+                                <span>📖</span> 핵심 가이드 ({localMatches.length}건)
                             </h2>
                             <div className="grid md:grid-cols-2 gap-6">
                                 {localMatches.map((p) => (
@@ -183,7 +192,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     {/* 2. 실시간 정부 정책 영역 */}
                     {policies.length > 0 ? (
                         <div>
-                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-1.5 text-gray-800 dark:text-gray-100">
+                            <h2 className="text-lg font-bold mb-6 pb-3 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-2 text-gray-800 dark:text-gray-100">
                                 <span>📋</span> 실시간 정부 정책 ({userAge !== undefined ? `${policies.length}건 매칭` : `${totalCount.toLocaleString()}건`})
                             </h2>
                             <SearchPolicyList
@@ -196,7 +205,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                         </div>
                     ) : (
                         query && (
-                            <div className="bg-gray-50 dark:bg-slate-800/30 rounded-2xl p-6 text-center">
+                            <div className="bg-gray-50 dark:bg-slate-900/30 rounded-3xl p-10 text-center border border-gray-100 dark:border-slate-800">
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
                                     실시간 정부 정책에 대한 추가 검색 결과가 없습니다.
                                 </p>
@@ -205,29 +214,33 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     )}
                 </div>
             ) : hasFilters ? (
-                <div className="bg-gray-50 dark:bg-slate-800/40 rounded-2xl p-12 text-center">
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">조건에 매칭되는 결과가 없습니다.</p>
-                    <p className="text-sm text-gray-400 dark:text-gray-500">
-                        나이나 지역 조건을 조정하거나 다른 검색어를 입력해 보세요.
+                <div className="bg-gray-50 dark:bg-slate-900/40 border border-dashed border-gray-200 dark:border-slate-800 rounded-3xl p-20 text-center">
+                    <div className="text-5xl mb-6">🤷‍♂️</div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-3 font-bold text-lg">조건에 매칭되는 결과가 없습니다.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 max-w-xs mx-auto">
+                        나이나 지역 조건을 조정하거나 더 짧은 검색어를 입력해 보세요.
                       </p>
                 </div>
             ) : (
-                <div className="bg-gray-50 dark:bg-slate-800/40 rounded-2xl p-12 text-center">
-                    <p className="text-gray-500 dark:text-gray-400">나이, 지역 또는 검색어 조건을 선택하여 맞춤 정책을 찾아보세요.</p>
-                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                        예: 경기도 거주, 만 25세 청년을 위한 일자리/주거 혜택 검색
+                <div className="bg-gray-50 dark:bg-slate-900/40 border border-dashed border-gray-200 dark:border-slate-800 rounded-3xl p-20 text-center">
+                    <div className="text-5xl mb-6">🎯</div>
+                    <p className="text-gray-600 dark:text-gray-300 font-bold text-lg mb-2">나이, 지역 또는 검색어 조건을 선택하세요</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2 max-w-sm mx-auto leading-relaxed">
+                        자신에게 꼭 맞는 혜택을 쉽고 빠르게 찾을 수 있도록 필터를 사용해 보세요.
                     </p>
                 </div>
             )}
 
-            <div className="mt-12 pt-8 border-t border-gray-150 dark:border-slate-800/80">
-                <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">인기 검색 태그</h3>
-                <div className="flex flex-wrap gap-2">
-                    {["청년", "월세", "배움카드", "도약계좌", "대출", "교육", "주거"].map((tag) => (
+            <div className="mt-16 pt-10 border-t border-gray-150 dark:border-slate-800/80">
+                <h3 className="font-bold mb-6 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <span>✨</span> 인기 검색 태그
+                </h3>
+                <div className="flex flex-wrap gap-2.5">
+                    {["청년", "월세", "배움카드", "도약계좌", "대출", "교육", "주거", "지원금"].map((tag) => (
                         <Link
                             key={tag}
                             href={`/search?q=${encodeURIComponent(tag)}`}
-                            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-sm transition font-medium"
+                            className="px-4 py-2 bg-white dark:bg-slate-900 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-800 rounded-xl text-sm transition-all font-medium hover:text-teal-600 dark:hover:text-teal-400 hover:border-teal-200 dark:hover:border-teal-900/50"
                         >
                             #{tag}
                         </Link>

@@ -49,27 +49,28 @@ export default async function CategoryPage({
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-12">
-            <Link href="/" className="text-sm text-teal-600 hover:underline">
-                ← 홈
+            <Link href="/" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
+                <span>←</span> 홈
             </Link>
-            <h1 className="text-3xl font-bold mt-4 mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold mt-4 mb-3 text-gray-900 dark:text-gray-100 tracking-tight">
                 {cat.icon} {cat.name}
             </h1>
-            <p className="text-gray-600 mb-8">{cat.description}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-10 text-base md:text-lg max-w-2xl leading-relaxed">{cat.description}</p>
 
             {markdownPolicies.length === 0 && apiPolicies.length === 0 ? (
-                <div className="bg-gray-50 rounded-2xl p-12 text-center">
-                    <p className="text-gray-500 mb-2">아직 정책이 없습니다.</p>
-                    <p className="text-sm text-gray-400">
-                        곧 새로운 정책이 추가될 예정입니다.
+                <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-800 rounded-3xl p-16 text-center">
+                    <div className="text-4xl mb-4">📭</div>
+                    <p className="text-gray-500 dark:text-gray-400 mb-2 font-medium">아직 등록된 정책이 없습니다.</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
+                        곧 새로운 정책 정보로 찾아뵙겠습니다.
                     </p>
                 </div>
             ) : (
-                <>
+                <div className="space-y-16">
                     {markdownPolicies.length > 0 && (
-                        <section className="mb-10">
-                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
-                                📖 읽어보기 ({markdownPolicies.length}개)
+                        <section>
+                            <h2 className="text-xl font-bold mb-6 pb-3 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+                                <span>📖</span> 핵심 가이드 ({markdownPolicies.length}개)
                             </h2>
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {markdownPolicies.map((p) => (
@@ -81,8 +82,8 @@ export default async function CategoryPage({
 
                     {apiPolicies.length > 0 && (
                         <section>
-                            <h2 className="text-lg font-bold mb-4 pb-2 border-b border-teal-200">
-                                📋 정부 정책 ({totalCount.toLocaleString()}건)
+                            <h2 className="text-xl font-bold mb-6 pb-3 border-b border-teal-200 dark:border-teal-900/50 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+                                <span>📋</span> 실시간 정부 정책 ({totalCount.toLocaleString()}건)
                             </h2>
                             <CategoryPolicyList
                                 initialPolicies={apiPolicies}
@@ -91,7 +92,7 @@ export default async function CategoryPage({
                             />
                         </section>
                     )}
-                </>
+                </div>
             )}
         </div>
     );
