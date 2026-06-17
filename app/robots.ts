@@ -6,11 +6,12 @@ export default function robots(): MetadataRoute.Robots {
             {
                 userAgent: "*",
                 allow: "/",
+                disallow: ["/api/", "/bookmarks"],
             },
             {
                 userAgent: "Mediapartners-Google",
                 allow: "/",
-            }
+            },
         ],
         sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr"}/sitemap.xml`,
     };

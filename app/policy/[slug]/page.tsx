@@ -45,13 +45,37 @@ export async function generateMetadata({
 
     const markdownPolicy = await getPolicyBySlug(slug);
     if (markdownPolicy) {
-        return { title: markdownPolicy.title, description: markdownPolicy.description };
+        const title = markdownPolicy.title;
+        const description = markdownPolicy.description || "";
+        return {
+            title,
+            description,
+            keywords: [title, markdownPolicy.category, "청년 정책", "정부 지원"],
+            openGraph: { title, description, type: "article" },
+            twitter: { card: "summary_large_image", title, description },
+            alternates: { canonical: `/policy/${slug}` },
+        };
     }
 
     if (isPlcyNo(slug)) {
         const apiPolicy = await getPolicyDetail(slug);
         if (apiPolicy) {
-            return { title: apiPolicy.plcyNm, description: apiPolicy.plcyExplnCn };
+            const title = apiPolicy.plcyNm;
+            const description = apiPolicy.plcyExplnCn || "";
+            const keywords = [
+                title,
+                ...(apiPolicy.plcyKywdNm?.split(",").map((k) => k.trim()).filter(Boolean) ?? []),
+                "청년 정책",
+                "정부 지원",
+            ];
+            return {
+                title,
+                description,
+                keywords,
+                openGraph: { title, description, type: "article" },
+                twitter: { card: "summary_large_image", title, description },
+                alternates: { canonical: `/policy/${slug}` },
+            };
         }
     }
 
@@ -106,8 +130,28 @@ export default async function PolicyPage({
     const markdownPolicy = await getPolicyBySlug(slug);
 
     if (markdownPolicy) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr";
+        const mdJsonLd = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: markdownPolicy.title,
+            description: markdownPolicy.description,
+            url: `${siteUrl}/policy/${slug}`,
+            datePublished: markdownPolicy.date,
+            ...(markdownPolicy.updated ? { dateModified: markdownPolicy.updated } : {}),
+            author: { "@type": "Organization", name: "청년노트" },
+            publisher: {
+                "@type": "Organization",
+                name: "청년노트",
+                url: siteUrl,
+            },
+        };
         return (
             <article className="max-w-3xl mx-auto px-4 py-12">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(mdJsonLd) }}
+                />
                 <div className="mb-4 flex justify-between items-center">
                     <Link
                         href={`/category/${markdownPolicy.categorySlug}`}
@@ -173,8 +217,35 @@ export default async function PolicyPage({
     // 키워드 추출
     const keywords = apiPolicy.plcyKywdNm?.split(",").filter(Boolean) || [];
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr";
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "GovernmentService",
+        name: apiPolicy.plcyNm,
+        description: apiPolicy.plcyExplnCn,
+        url: `${baseUrl}/policy/${slug}`,
+        provider: {
+            "@type": "GovernmentOrganization",
+            name: apiPolicy.sprvsnInstCdNm || "대한민국 정부",
+        },
+        ...(apiPolicy.aplyUrlAddr ? { serviceUrl: apiPolicy.aplyUrlAddr } : {}),
+        ...(apiPolicy.plcyKywdNm
+            ? { keywords: apiPolicy.plcyKywdNm.split(",").map((k) => k.trim()).filter(Boolean) }
+            : {}),
+        audience: {
+            "@type": "Audience",
+            audienceType: apiPolicy.sprtTrgtAgeLmtYn === "Y"
+                ? `만 ${apiPolicy.sprtTrgtMinAge || 19}세~${apiPolicy.sprtTrgtMaxAge || 34}세 청년`
+                : "청년",
+        },
+    };
+
     return (
         <article className="max-w-5xl mx-auto px-4 py-12">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* 헤더 */}
             <div className="mb-6 flex justify-between items-center">
                 <Link href={`/category/${catSlug}`} className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">

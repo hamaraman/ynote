@@ -27,9 +27,24 @@ export async function generateMetadata({
     const { slug } = await params;
     const cat = categories[slug as keyof typeof categories];
     if (!cat) return {};
+    const title = `${cat.name} 청년 정책`;
+    const description = `${cat.description} — 청년노트에서 한눈에 확인하세요.`;
     return {
-        title: cat.name,
-        description: `${cat.name} 카테고리 - ${cat.description}`,
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+        },
+        alternates: {
+            canonical: `/category/${slug}`,
+        },
     };
 }
 

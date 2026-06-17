@@ -6,12 +6,34 @@ import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr"),
   title: {
     default: "청년노트 - 청년 정책 한눈에",
     template: "%s | 청년노트",
   },
   description:
     "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
+  keywords: ["청년 정책", "청년도약계좌", "월세 지원", "내일배움카드", "청년 지원금", "정부 혜택", "청년 복지"],
+  authors: [{ name: "청년노트" }],
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "청년노트",
+    title: "청년노트 - 청년 정책 한눈에",
+    description:
+      "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "청년노트 - 청년 정책 한눈에",
+    description:
+      "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 const categories = [
