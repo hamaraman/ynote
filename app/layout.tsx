@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr"),
   other: {
     "naver-site-verification": "1322dcfaecf54c24fee4e8fd8e1bb6e388ad551b",
+    "google-site-verification": "jVPUlrt-xzLYl_RFJtsTtYd-w36x0MXUWcRecMJ7B58",
     ...(adsenseClientId && { "google-adsense-account": adsenseClientId }),
   },
   title: {
