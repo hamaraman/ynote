@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 
 const CATEGORIES = [
     { label: "전체", value: "", icon: "" },
@@ -55,6 +55,22 @@ export default function SearchFilters({
     const [age, setAge] = useState(defaultAge);
     const [region, setRegion] = useState(defaultRegion);
     const [cat, setCat] = useState(defaultCat);
+    const [loadedFromStorage, setLoadedFromStorage] = useState(false);
+
+    // URL 파라미터가 없는 첫 방문일 때만 이전 조건 불러오기 (클라이언트 전용)
+    useEffect(() => {
+        const hasUrlParams = !!(defaultQ || defaultAge || defaultRegion || defaultCat);
+        if (!hasUrlParams) {
+            const savedAge = localStorage.getItem("ynote_age") || "";
+            const savedRegion = localStorage.getItem("ynote_region") || "";
+            if (savedAge || savedRegion) {
+                if (savedAge) setAge(savedAge);
+                if (savedRegion) setRegion(savedRegion);
+                setLoadedFromStorage(true);
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     function buildUrl(overrides: Partial<Record<FilterKey, string>> = {}) {
         const vals: Record<FilterKey, string> = { q, age, region, cat, ...overrides };
@@ -73,6 +89,12 @@ export default function SearchFilters({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // 나이·지역 조건을 localStorage에 저장
+        if (age) localStorage.setItem("ynote_age", age);
+        else localStorage.removeItem("ynote_age");
+        if (region) localStorage.setItem("ynote_region", region);
+        else localStorage.removeItem("ynote_region");
+        setLoadedFromStorage(false);
         navigate();
     };
 
@@ -91,6 +113,9 @@ export default function SearchFilters({
 
     const handleReset = () => {
         setQ(""); setAge(""); setRegion(""); setCat("");
+        setLoadedFromStorage(false);
+        localStorage.removeItem("ynote_age");
+        localStorage.removeItem("ynote_region");
         startTransition(() => router.push("/search"));
     };
 
@@ -127,6 +152,24 @@ export default function SearchFilters({
                     );
                 })}
             </div>
+
+            {/* 이전 조건 불러옴 안내 */}
+            {loadedFromStorage && (
+                <div className="flex items-center gap-2.5 text-xs bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 rounded-2xl px-4 py-3">
+                    <span className="text-base">💾</span>
+                    <span>
+                        이전에 저장한 조건 {age && `(만 ${age}세`}{age && region && ", "}{region && REGIONS.find(r => r.code === region)?.name}{age || region ? ")" : ""}을 불러왔습니다.
+                        {" "}검색 버튼을 눌러 적용하세요.
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() => setLoadedFromStorage(false)}
+                        className="ml-auto text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
             {/* 필터 폼 */}
             <form

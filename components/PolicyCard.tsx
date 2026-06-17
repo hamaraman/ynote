@@ -4,6 +4,7 @@ import Link from "next/link";
 import BookmarkButton, { BookmarkedPolicy } from "./BookmarkButton";
 import { YouthPolicy } from "@/lib/youthApi";
 import { PolicyMeta } from "@/lib/posts";
+import { getDDay } from "@/lib/utils";
 
 interface PolicyCardProps {
     policy: YouthPolicy | PolicyMeta | BookmarkedPolicy;
@@ -123,6 +124,9 @@ export default function PolicyCard({ policy, isMarkdown = false }: PolicyCardPro
     const regionLabel = !isMarkdownType && !("id" in policy)
         ? getRegionLabel((policy as YouthPolicy).zipCd)
         : null;
+    const dday = !isMarkdownType && !("id" in policy)
+        ? getDDay((policy as YouthPolicy).aplyYmd, (policy as YouthPolicy).bizPrdEndYmd)
+        : null;
 
     return (
         <div className="relative group h-full">
@@ -141,6 +145,17 @@ export default function PolicyCard({ policy, isMarkdown = false }: PolicyCardPro
                         <span className="text-[11px] font-semibold tracking-wide px-2.5 py-1 bg-teal-50 text-teal-700 rounded-lg dark:bg-teal-950/40 dark:text-teal-300">
                             {isMarkdownType ? "📖 읽어보기" : categoryName}
                         </span>
+                        {dday !== null && dday <= 30 && (
+                            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border whitespace-nowrap ${
+                                dday <= 7
+                                    ? "bg-red-50 text-red-600 border-red-100 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900/30"
+                                    : dday <= 14
+                                    ? "bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-900/30"
+                                    : "bg-yellow-50 text-yellow-700 border-yellow-100 dark:bg-yellow-950/30 dark:text-yellow-500 dark:border-yellow-900/30"
+                            }`}>
+                                ⏰ {dday === 0 ? "D-Day" : `D-${dday}`}
+                            </span>
+                        )}
                         {!isMarkdownType && !("id" in policy) && (policy as YouthPolicy).mclsfNm && (
                             <span className="text-[11px] px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">
                                 {(policy as YouthPolicy).mclsfNm}

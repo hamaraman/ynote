@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPolicies } from "@/lib/youthApi";
 import PolicyCard from "@/components/PolicyCard";
+import { getDDay } from "@/lib/utils";
 
 const categories = [
     { name: "금융/자산", href: "/category/finance", icon: "💰", desc: "청년도약계좌, 청약통장, 소득공제펀드", color: "bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-900/30 dark:border dark:border-amber-900/20 text-gray-900 dark:text-gray-100" },
@@ -21,6 +22,14 @@ export default async function Home() {
     const apiData = await getPolicies({ pageSize: 24 }, 60 * 30);
     const recentPolicies = apiData.result?.youthPolicyList ?? [];
     const totalCount = apiData.result?.pagging?.totCount ?? 0;
+
+    // D-14 이내 마감 정책 추출 (사용 가능한 정책 중 마감이 임박한 순)
+    const urgentPolicies = recentPolicies
+        .map((p) => ({ policy: p, dday: getDDay(p.aplyYmd, p.bizPrdEndYmd) }))
+        .filter(({ dday }) => dday !== null && dday <= 14)
+        .sort((a, b) => a.dday! - b.dday!)
+        .slice(0, 3)
+        .map(({ policy }) => policy);
 
     return (
         <div className="max-w-5xl mx-auto px-4">
@@ -81,6 +90,25 @@ export default async function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* 신청 마감 임박 정책 */}
+            {urgentPolicies.length > 0 && (
+                <section className="pb-12">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                            <span>⏰</span> 신청 마감 임박
+                        </h2>
+                        <Link href="/search" className="text-sm text-teal-600 dark:text-teal-400 hover:underline">
+                            전체 검색 →
+                        </Link>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {urgentPolicies.map((p) => (
+                            <PolicyCard key={p.plcyNo} policy={p} />
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* 카테고리 영역 */}
             <section className="pb-12">
