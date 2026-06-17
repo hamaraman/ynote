@@ -130,7 +130,15 @@ export async function getPolicies(
     const res = await fetch(url, { next: { revalidate: revalidateSec } });
 
     if (!res.ok) {
-        throw new Error(`청년정책 API 호출 실패: HTTP ${res.status}`);
+        console.error(`청년정책 API 호출 실패: HTTP ${res.status}`);
+        return {
+            resultCode: res.status,
+            resultMessage: `HTTP ${res.status}`,
+            result: {
+                pagging: { totCount: 0, pageNum: params.pageNum ?? 1, pageSize: params.pageSize ?? 10 },
+                youthPolicyList: [],
+            },
+        };
     }
     const data = (await res.json()) as YouthApiResponse;
     return data;
@@ -156,7 +164,8 @@ export async function getPolicyDetail(plcyNo: string): Promise<YouthPolicy | nul
     const res = await fetch(url, { next: { revalidate: 60 * 60 * 6 } });
 
     if (!res.ok) {
-        throw new Error(`청년정책 상세 API 호출 실패: HTTP ${res.status}`);
+        console.error(`청년정책 상세 API 호출 실패: HTTP ${res.status}`);
+        return null;
     }
     const data = (await res.json()) as YouthApiResponse;
     return data.result?.youthPolicyList?.[0] ?? null;
