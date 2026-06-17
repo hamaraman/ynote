@@ -52,7 +52,6 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <GoogleAnalytics />
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async
@@ -124,6 +123,7 @@ export default function RootLayout({
         <div className="fixed bottom-6 right-6 z-50">
           <ThemeToggle />
         </div>
+        <GoogleAnalytics />
 
         <footer className="border-t border-gray-200 dark:border-slate-800 mt-16 bg-gray-50 dark:bg-slate-950">
           <div className="max-w-5xl mx-auto px-4 py-12 text-sm text-gray-600 dark:text-gray-400">
