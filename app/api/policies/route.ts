@@ -9,9 +9,10 @@ import { getPolicies, CATEGORY_TO_LCLSF } from "@/lib/youthApi";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category");
+    const category = searchParams.get("category") || searchParams.get("cat");
     const keyword = searchParams.get("q") ?? undefined;
     const region = searchParams.get("region") ?? undefined;
+    const userAge = searchParams.get("age") ? Number(searchParams.get("age")) : undefined;
     const pageNum = Number(searchParams.get("page") ?? "1");
     const pageSize = Number(searchParams.get("size") ?? "24");
 
@@ -22,11 +23,22 @@ export async function GET(req: NextRequest) {
             lclsfNm,
             srchPolyBizSecd: region || undefined,
             pageNum,
-            pageSize
+            pageSize,
         });
 
+        // 나이 필터: API가 지원하지 않으므로 서버에서 직접 필터링
+        if (userAge !== undefined && data.result?.youthPolicyList) {
+            data.result.youthPolicyList = data.result.youthPolicyList.filter((p) => {
+                if (p.sprtTrgtAgeLmtYn !== "Y") return true;
+                const min = p.sprtTrgtMinAge ? Number(p.sprtTrgtMinAge) : 0;
+                const max = p.sprtTrgtMaxAge ? Number(p.sprtTrgtMaxAge) : 99;
+                return userAge >= min && userAge <= max;
+            });
+            data.result.pagging.totCount = data.result.youthPolicyList.length;
+        }
+
         return NextResponse.json(data, {
-            headers: { "Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400" },
+            headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
         });
     } catch (e) {
         const msg = e instanceof Error ? e.message : "알 수 없는 오류";
