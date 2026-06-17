@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
 import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
@@ -58,11 +57,13 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         {adsenseClientId && (
-          <Script
+          // 네이티브 <script>로 렌더링해 서버 HTML <head>에 그대로 포함시킨다.
+          // (next/script의 afterInteractive는 런타임 주입이라 AdSense 인증
+          //  크롤러가 스니펫을 찾지 못함)
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
             crossOrigin="anonymous"
-            strategy="afterInteractive"
           />
         )}
       </head>
