@@ -80,6 +80,17 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             let fetchedList = data.result?.youthPolicyList ?? [];
             totalCount = data.result?.pagging?.totCount ?? 0;
 
+            // 지역 클라이언트 필터링: API가 srchPolyBizSecd를 완전히 강제하지 않으므로
+            // zipCd 필드로 후처리 — 선택 지역·전국(003002018)·미지정만 남김
+            if (regionCode && regionCode !== "003002018") {
+                fetchedList = fetchedList.filter((p) => {
+                    if (!p.zipCd) return true;
+                    const codes = p.zipCd.split(",").map((c) => c.trim());
+                    return codes.some((c) => c === "" || c === regionCode || c === "003002018");
+                });
+                totalCount = fetchedList.length;
+            }
+
             // 만 나이 조건 클라이언트 필터링
             if (userAge !== undefined) {
                 fetchedList = fetchedList.filter((p) => {

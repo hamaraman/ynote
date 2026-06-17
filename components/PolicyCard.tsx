@@ -21,6 +21,35 @@ function getCategorySlug(lclsfNm: string | null): string {
     return map[lclsfNm ?? ""] ?? "life";
 }
 
+const REGION_CODE_TO_NAME: Record<string, string> = {
+    "003002001": "서울",
+    "003002002": "부산",
+    "003002003": "대구",
+    "003002004": "인천",
+    "003002005": "광주",
+    "003002006": "대전",
+    "003002007": "울산",
+    "003002008": "세종",
+    "003002009": "경기",
+    "003002010": "강원",
+    "003002011": "충북",
+    "003002012": "충남",
+    "003002013": "전북",
+    "003002014": "전남",
+    "003002015": "경북",
+    "003002016": "경남",
+    "003002017": "제주",
+    "003002018": "전국",
+};
+
+function getRegionLabel(zipCd: string | null | undefined): string | null {
+    if (!zipCd) return "전국";
+    const codes = zipCd.split(",").map((c) => c.trim()).filter(Boolean);
+    if (codes.length === 0) return "전국";
+    if (codes.includes("003002018") || codes.length > 3) return null; // 전국이거나 너무 많으면 표시 생략
+    return codes.map((c) => REGION_CODE_TO_NAME[c] ?? c).join("·");
+}
+
 function getCategoryName(lclsfNm: string | null): string {
     const map: Record<string, string> = {
         "금융･복지･문화": "금융/자산",
@@ -91,6 +120,9 @@ export default function PolicyCard({ policy, isMarkdown = false }: PolicyCardPro
     const keywords = !isMarkdownType && !("id" in policy) && (policy as YouthPolicy).plcyKywdNm
         ? (policy as YouthPolicy).plcyKywdNm!.split(",").filter(Boolean).slice(0, 2)
         : [];
+    const regionLabel = !isMarkdownType && !("id" in policy)
+        ? getRegionLabel((policy as YouthPolicy).zipCd)
+        : null;
 
     return (
         <div className="relative group h-full">
@@ -112,6 +144,11 @@ export default function PolicyCard({ policy, isMarkdown = false }: PolicyCardPro
                         {!isMarkdownType && !("id" in policy) && (policy as YouthPolicy).mclsfNm && (
                             <span className="text-[11px] px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">
                                 {(policy as YouthPolicy).mclsfNm}
+                            </span>
+                        )}
+                        {regionLabel && regionLabel !== "전국" && (
+                            <span className="text-[11px] px-2 py-1 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-950/30 dark:text-blue-400 font-medium">
+                                📍 {regionLabel}
                             </span>
                         )}
                         {keywords.map((kw, i) => (
