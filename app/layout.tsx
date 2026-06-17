@@ -6,8 +6,13 @@ import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 
+const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr"),
+  ...(adsenseClientId && {
+    other: { "google-adsense-account": adsenseClientId },
+  }),
   title: {
     default: "청년노트 - 청년 정책 한눈에",
     template: "%s | 청년노트",
@@ -52,10 +57,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
+        {adsenseClientId && (
           <Script
             async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
             crossOrigin="anonymous"
             strategy="afterInteractive"
           />
