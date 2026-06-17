@@ -9,9 +9,10 @@ const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr"),
-  ...(adsenseClientId && {
-    other: { "google-adsense-account": adsenseClientId },
-  }),
+  other: {
+    "naver-site-verification": "1322dcfaecf54c24fee4e8fd8e1bb6e388ad551b",
+    ...(adsenseClientId && { "google-adsense-account": adsenseClientId }),
+  },
   title: {
     default: "청년노트 - 청년 정책 한눈에",
     template: "%s | 청년노트",
