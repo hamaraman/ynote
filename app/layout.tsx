@@ -36,6 +36,14 @@ export const metadata: Metadata = {
     description:
       "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: { url: "/favicon.png", sizes: "512x512" },
+  },
   robots: {
     index: true,
     follow: true,

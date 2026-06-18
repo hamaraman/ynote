@@ -53,7 +53,19 @@
       "mcp__claude_ai_Notion__notion-create-pages",
       "Bash(identify app/icon.png)",
       "mcp__claude_ai_Notion__notion-update-page",
-      "Bash(git rev-list *)"
+      "Bash(git rev-list *)",
+      "Bash(taskkill /F /PID 19448)",
+      "Bash(taskkill /F /PID 17512)",
+      "Bash(netstat -ano)",
+      "Bash(rm -rf .next)",
+      "Bash(curl -v http://localhost:3000)",
+      "Bash(pkill -9 -f \"next\")",
+      "Bash(powershell -Command \"Stop-Process -Id 17512 -Force\")",
+      "Bash(curl -s http://localhost:3003)",
+      "Bash(git stash *)",
+      "Bash(dir C:\\\\work\\\\ynote\\\\app *)",
+      "PowerShell(dir \"C:\\\\work\\\\ynote\\\\public\" -ErrorAction SilentlyContinue; if \\(-not \\(Test-Path \"C:\\\\work\\\\ynote\\\\public\"\\)\\) { Write-Output \"public 폴더 없음\" })",
+      "PowerShell($img = [System.Drawing.Image]::FromFile\\(\"C:\\\\work\\\\ynote\\\\app\\\\icon.png\"\\); Write-Output \"크기: $\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))"
     ]
   }
 }
