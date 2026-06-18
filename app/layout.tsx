@@ -83,7 +83,7 @@ export default function RootLayout({
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-4 lg:gap-6">
                 <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0 flex items-center gap-1.5">
-                  <img src="/favicon.png" alt="" className="w-8 h-8 flex-shrink-0" />
+                  <img src="/favicon.png" alt="" className="w-10 h-10 flex-shrink-0" />
                   청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
@@ -147,7 +147,7 @@ export default function RootLayout({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
                 <Link href="/" className="text-lg font-bold text-teal-600 dark:text-teal-400 mb-4 flex items-center gap-1.5">
-                  <img src="/favicon.png" alt="" className="w-7 h-7 flex-shrink-0" />
+                  <img src="/favicon.png" alt="" className="w-9 h-9 flex-shrink-0" />
                   청년노트
                 </Link>
                 <p className="max-w-xs leading-relaxed">
