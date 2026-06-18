@@ -82,8 +82,9 @@ export default function RootLayout({
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-4 lg:gap-6">
-                <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0">
-                  📒 청년노트
+                <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0 flex items-center gap-1.5">
+                  <img src="/favicon.png" alt="" width={24} height={24} className="inline-block" />
+                  청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
                 <form action="/search" method="get" className="hidden lg:block">
@@ -145,8 +146,9 @@ export default function RootLayout({
           <div className="max-w-5xl mx-auto px-4 py-12 text-sm text-gray-600 dark:text-gray-400">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
-                <Link href="/" className="text-lg font-bold text-teal-600 dark:text-teal-400 mb-4 block">
-                  📒 청년노트
+                <Link href="/" className="text-lg font-bold text-teal-600 dark:text-teal-400 mb-4 flex items-center gap-1.5">
+                  <img src="/favicon.png" alt="" width={22} height={22} className="inline-block" />
+                  청년노트
                 </Link>
                 <p className="max-w-xs leading-relaxed">
                   청년들에게 꼭 필요한 정부 정책과 혜택을 쉽고 친근하게 전달하는 정책 가이드 서비스입니다.
