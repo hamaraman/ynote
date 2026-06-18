@@ -83,7 +83,7 @@ export default function RootLayout({
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-4 lg:gap-6">
                 <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0 flex items-center gap-1.5">
-                  <img src="/favicon.png" alt="" className="w-12 h-12 flex-shrink-0" />
+                  <img src="/favicon.png" alt="" className="w-11 h-11 flex-shrink-0" />
                   청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
