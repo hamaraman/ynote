@@ -26,16 +26,6 @@ export async function GET(req: NextRequest) {
             pageSize,
         });
 
-        // 지역 필터: API(srchPolyBizSecd)가 완전히 강제하지 않으므로 zipCd로 후처리
-        if (region && region !== "003002018" && data.result?.youthPolicyList) {
-            data.result.youthPolicyList = data.result.youthPolicyList.filter((p) => {
-                if (!p.zipCd) return true;
-                const codes = p.zipCd.split(",").map((c) => c.trim());
-                return codes.some((c) => c === "" || c === region || c === "003002018");
-            });
-            data.result.pagging.totCount = data.result.youthPolicyList.length;
-        }
-
         // 나이 필터: API가 지원하지 않으므로 서버에서 직접 필터링
         if (userAge !== undefined && data.result?.youthPolicyList) {
             data.result.youthPolicyList = data.result.youthPolicyList.filter((p) => {
