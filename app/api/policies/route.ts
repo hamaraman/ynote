@@ -27,6 +27,34 @@ const REGION_ZIP_PREFIX: Record<string, string> = {
     "003002017": "50", // 제주
 };
 
+// 기관명에서 지역 코드 추출 (zipCd가 전국으로 코딩된 경우 fallback)
+const REGION_KEYWORDS: [string, string[]][] = [
+    ["003002001", ["서울"]],
+    ["003002002", ["부산"]],
+    ["003002003", ["대구"]],
+    ["003002004", ["인천"]],
+    ["003002005", ["광주"]],
+    ["003002006", ["대전"]],
+    ["003002007", ["울산"]],
+    ["003002008", ["세종"]],
+    ["003002009", ["경기"]],
+    ["003002010", ["강원"]],
+    ["003002011", ["충북", "충청북도"]],
+    ["003002012", ["충남", "충청남도"]],
+    ["003002013", ["전북", "전라북도"]],
+    ["003002014", ["전남", "전라남도"]],
+    ["003002015", ["경북", "경상북도"]],
+    ["003002016", ["경남", "경상남도"]],
+    ["003002017", ["제주"]],
+];
+
+function getInstRegion(instName: string): string | null {
+    for (const [code, keywords] of REGION_KEYWORDS) {
+        if (keywords.some((kw) => instName.includes(kw))) return code;
+    }
+    return null; // 중앙부처 등 → 전국
+}
+
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") || searchParams.get("cat");
@@ -46,13 +74,21 @@ export async function GET(req: NextRequest) {
             pageSize,
         });
 
-        // 지역 필터: zipCd 앞 2자리(광역시도 코드)로 매칭
+        // 지역 필터: zipCd 앞 2자리로 매칭, 전국코딩 정책은 기관명으로 2차 판별
         if (region && data.result?.youthPolicyList) {
             const prefix = REGION_ZIP_PREFIX[region];
             if (prefix) {
+                const ALL_PREFIXES = new Set(Object.values(REGION_ZIP_PREFIX));
                 data.result.youthPolicyList = data.result.youthPolicyList.filter((p) => {
                     if (!p.zipCd || p.zipCd.trim() === "") return true;
                     const codes = p.zipCd.split(",").map((c) => c.trim()).filter(Boolean);
+                    const presentPrefixes = new Set(codes.map((c) => c.slice(0, 2)).filter((c) => ALL_PREFIXES.has(c)));
+                    // zipCd가 전체 광역 10개 이상 포함 → 전국 코딩 의심, 기관명으로 판별
+                    if (presentPrefixes.size >= 10) {
+                        const instRegion = getInstRegion(p.sprvsnInstCdNm || "");
+                        if (instRegion !== null) return instRegion === region;
+                        return true; // 중앙부처 → 전국 표시
+                    }
                     return codes.some((c) => c.startsWith(prefix));
                 });
                 data.result.pagging.totCount = data.result.youthPolicyList.length;
