@@ -104,6 +104,7 @@ export default async function CategoryPage({
                                 initialPolicies={apiPolicies}
                                 categorySlug={slug}
                                 initialTotalCount={totalCount}
+                                isRegion={slug === "region"}
                             />
                         </section>
                     )}
