@@ -47,7 +47,8 @@ export default function CategoryPolicyList({
     const fetchPolicies = async (regionCode: string, pageNum: number, append: boolean) => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({ category: categorySlug, page: String(pageNum), size: "24" });
+            const params = new URLSearchParams({ page: String(pageNum), size: "24" });
+            if (!isRegion) params.set("category", categorySlug);
             if (regionCode) params.set("region", regionCode);
             const res = await fetch(`/api/policies?${params.toString()}`);
             if (!res.ok) throw new Error("정책을 불러오는 데 실패했습니다.");
