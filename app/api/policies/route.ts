@@ -66,12 +66,15 @@ export async function GET(req: NextRequest) {
 
     try {
         const lclsfNm = category ? CATEGORY_TO_LCLSF[category] : undefined;
+        // srchPolyBizSecd는 외부 API에서 실제로 필터링되지 않으므로 전달하지 않음
+        // → 동일 pageNum/pageSize 조합끼리 Next.js fetch 캐시 공유
+        // 지역 필터가 있으면 zipCd 필터링 후 결과가 줄어드므로 더 많이 가져옴
+        const fetchSize = region ? Math.min(pageSize * 4, 200) : pageSize;
         const data = await getPolicies({
             plcyNm: keyword || undefined,
             lclsfNm,
-            srchPolyBizSecd: region || undefined,
             pageNum,
-            pageSize,
+            pageSize: fetchSize,
         });
 
         // 지역 필터: zipCd 앞 2자리로 매칭, 전국코딩 정책은 기관명으로 2차 판별
@@ -107,7 +110,7 @@ export async function GET(req: NextRequest) {
         }
 
         return NextResponse.json(data, {
-            headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
+            headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" },
         });
     } catch (e) {
         const msg = e instanceof Error ? e.message : "알 수 없는 오류";
