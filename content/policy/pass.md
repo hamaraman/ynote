@@ -1,8 +1,8 @@
 ---
 title: "K-패스 신청 방법과 환급률, 2026년 '모두의 카드'까지 한 번에"
 description: "월 15회 이상 대중교통 이용 시 최대 53% 환급. 2026년 정액형 '모두의 카드'가 통합된 K-패스의 청년 환급률, 신청 방법, 유의사항을 정리했습니다."
-category: "주거"
-categorySlug: "housing"
+category: "교통"
+categorySlug: "transport"
 date: "2026-06-11"
 tags: ["K-패스", "교통비지원", "모두의카드", "대중교통", "환급"]
 ---

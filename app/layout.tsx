@@ -55,7 +55,9 @@ const categories = [
   { name: "금융/자산", href: "/category/finance", icon: "💰" },
   { name: "주거", href: "/category/housing", icon: "🏠" },
   { name: "일자리", href: "/category/job", icon: "💼" },
+  { name: "창업", href: "/category/startup", icon: "🚀" },
   { name: "교육/문화", href: "/category/edu", icon: "📚" },
+  { name: "교통", href: "/category/transport", icon: "🚍" },
   { name: "건강/생활", href: "/category/life", icon: "🏥" },
   { name: "지역별", href: "/category/region", icon: "📍" },
 ];
@@ -180,4 +182,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+}
