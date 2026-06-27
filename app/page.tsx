@@ -1,21 +1,28 @@
 import Link from "next/link";
 import { getPolicies } from "@/lib/youthApi";
 import { CATEGORY_LIST } from "@/lib/categories";
+import { getAllPolicies, type PolicyMeta } from "@/lib/posts";
 import PolicyCard from "@/components/PolicyCard";
 import { getDDay } from "@/lib/utils";
 
 const categories = CATEGORY_LIST;
 
-const popular = [
-    { title: "청년도약계좌 신청 방법과 조건 총정리", href: "/policy/youth-leap-account", cat: "금융" },
-    { title: "청년 월세 지원금, 지역별로 다 모았다", href: "/policy/youth-rent-support", cat: "주거" },
-    { title: "국민내일배움카드 신청부터 사용까지", href: "/policy/learning-card", cat: "일자리" },
-];
+// 큐레이션은 슬러그로만 지정한다. 제목·카테고리·설명은 실제 마크다운에서 가져와
+// 콘텐츠와 어긋나거나(드리프트) 파일 삭제 시 깨진 링크가 생기지 않게 한다.
+const FEATURED_SLUG = "youth-leap-account";
+const POPULAR_SLUGS = ["youth-leap-account", "youth-rent-support", "learning-card"];
 
 export default async function Home() {
     const apiData = await getPolicies({ pageSize: 24 }, 60 * 30);
     const recentPolicies = apiData.result?.youthPolicyList ?? [];
     const totalCount = apiData.result?.pagging?.totCount ?? 0;
+
+    // 큐레이션 슬러그 → 실제 콘텐츠 메타 (존재하는 글만 남김)
+    const metaBySlug = new Map(getAllPolicies().map((p) => [p.slug, p]));
+    const featured = metaBySlug.get(FEATURED_SLUG);
+    const popular = POPULAR_SLUGS
+        .map((slug) => metaBySlug.get(slug))
+        .filter((p): p is PolicyMeta => Boolean(p));
 
     // D-14 이내 마감 정책 추출 (사용 가능한 정책 중 마감이 임박한 순)
     const urgentPolicies = recentPolicies
@@ -59,6 +66,7 @@ export default async function Home() {
             </section>
 
             {/* 오늘의 추천 정책 배너 */}
+            {featured && (
             <section className="mb-12">
                 <div className="bg-gradient-to-r from-teal-500/10 via-teal-50/50 to-teal-500/10 dark:from-teal-950/20 dark:via-slate-900 dark:to-teal-950/20 border border-teal-100/50 dark:border-teal-900/30 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl pointer-events-none" />
@@ -67,15 +75,15 @@ export default async function Home() {
                             🌟 오늘의 추천 정책
                         </span>
                         <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 dark:text-white leading-tight">
-                            청년도약계좌 신청 방법과 조건 총정리
+                            {featured.title}
                         </h2>
                         <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed">
-                            매월 최대 70만원씩 5년간 납입하면 비과세 혜택과 정부 기여금까지 더해 약 5천만원의 목돈을 모을 수 있는 청년 대표 자산 형성 정책입니다.
+                            {featured.description}
                         </p>
                     </div>
                     <div className="flex-shrink-0 w-full md:w-auto relative z-10">
                         <Link
-                            href="/policy/youth-leap-account"
+                            href={`/policy/${featured.slug}`}
                             className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3.5 rounded-2xl font-bold transition shadow-md hover:shadow-lg active:scale-95 text-sm cursor-pointer"
                         >
                             혜택 확인하기
@@ -84,6 +92,7 @@ export default async function Home() {
                     </div>
                 </div>
             </section>
+            )}
 
             {/* 신청 마감 임박 정책 */}
             {urgentPolicies.length > 0 && (
@@ -130,6 +139,7 @@ export default async function Home() {
             </section>
 
             {/* 실시간 트렌드 정책 TOP 3 */}
+            {popular.length > 0 && (
             <section className="pb-12">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
@@ -146,8 +156,8 @@ export default async function Home() {
                         const icons = ["🥇", "🥈", "🥉"];
                         return (
                             <Link
-                                key={p.href}
-                                href={p.href}
+                                key={p.slug}
+                                href={`/policy/${p.slug}`}
                                 className="group relative flex flex-col justify-between p-6 bg-white dark:bg-slate-900 border border-gray-150 dark:border-slate-800/80 rounded-2xl transition hover:-translate-y-1 hover:shadow-md hover:border-teal-500/20"
                             >
                                 <div>
@@ -156,7 +166,7 @@ export default async function Home() {
                                             {idx + 1}
                                         </span>
                                         <span className="text-xs px-2.5 py-1 bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-400 font-semibold rounded-lg">
-                                            {p.cat}
+                                            {p.category}
                                         </span>
                                     </div>
                                     <h3 className="font-bold text-gray-800 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug line-clamp-2 mb-8">
@@ -171,6 +181,7 @@ export default async function Home() {
                     })}
                 </div>
             </section>
+            )}
 
             {/* 정부 정책 목록 */}
             {recentPolicies.length > 0 && (
