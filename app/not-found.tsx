@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { CATEGORY_LIST } from "@/lib/categories";
 
 export const metadata: Metadata = {
     title: "페이지를 찾을 수 없습니다",
@@ -7,14 +8,10 @@ export const metadata: Metadata = {
     robots: { index: false, follow: false },
 };
 
-const QUICK_LINKS = [
-    { href: "/category/finance", label: "💰 금융/자산" },
-    { href: "/category/housing", label: "🏠 주거" },
-    { href: "/category/job", label: "💼 일자리" },
-    { href: "/category/edu", label: "📚 교육/문화" },
-    { href: "/category/life", label: "🏥 건강/생활" },
-    { href: "/category/region", label: "📍 지역별" },
-];
+const QUICK_LINKS = CATEGORY_LIST.map((c) => ({
+    href: c.href,
+    label: `${c.icon} ${c.navLabel}`,
+}));
 
 export default function NotFound() {
     return (

@@ -1,18 +1,10 @@
 import Link from "next/link";
 import { getPolicies } from "@/lib/youthApi";
+import { CATEGORY_LIST } from "@/lib/categories";
 import PolicyCard from "@/components/PolicyCard";
 import { getDDay } from "@/lib/utils";
 
-const categories = [
-    { name: "금융/자산", href: "/category/finance", icon: "💰", desc: "청년도약계좌, 청약통장, 소득공제펀드", color: "bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-900/30 dark:border dark:border-amber-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "주거", href: "/category/housing", icon: "🏠", desc: "월세지원, 전세대출, 청년주택", color: "bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-900/30 dark:border dark:border-rose-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "일자리", href: "/category/job", icon: "💼", desc: "내일배움카드, 구직지원금, 채움공제", color: "bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/20 dark:hover:bg-sky-900/30 dark:border dark:border-sky-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "창업", href: "/category/startup", icon: "🚀", desc: "예비창업패키지, 창업자금, 1인 창조기업", color: "bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/20 dark:hover:bg-teal-900/30 dark:border dark:border-teal-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "교육/문화", href: "/category/edu", icon: "📚", desc: "문화패스, 평생교육바우처, 학자금대출", color: "bg-violet-50 hover:bg-violet-100 dark:bg-violet-950/20 dark:hover:bg-violet-900/30 dark:border dark:border-violet-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "교통", href: "/category/transport", icon: "🚍", desc: "K-패스, 기후동행카드, 지역 교통패스", color: "bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-950/20 dark:hover:bg-cyan-900/30 dark:border dark:border-cyan-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "건강/생활", href: "/category/life", icon: "🏥", desc: "마음건강바우처, 청년몽땅정보통", color: "bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:hover:bg-emerald-900/30 dark:border dark:border-emerald-900/20 text-gray-900 dark:text-gray-100" },
-    { name: "지역별 혜택", href: "/category/region", icon: "📍", desc: "서울/경기/부산 등 지자체 지원", color: "bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/20 dark:hover:bg-orange-900/30 dark:border dark:border-orange-900/20 text-gray-900 dark:text-gray-100" },
-];
+const categories = CATEGORY_LIST;
 
 const popular = [
     { title: "청년도약계좌 신청 방법과 조건 총정리", href: "/policy/youth-leap-account", cat: "금융" },
@@ -131,7 +123,7 @@ export default async function Home() {
                                 <div className="text-3xl mb-2">{c.icon}</div>
                                 <div className="font-bold mb-1">{c.name}</div>
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{c.desc}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{c.examples}</div>
                         </Link>
                     ))}
                 </div>

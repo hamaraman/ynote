@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { CATEGORY_LIST } from "@/lib/categories";
 import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
@@ -52,16 +53,7 @@ export const metadata: Metadata = {
   },
 };
 
-const categories = [
-  { name: "금융/자산", href: "/category/finance", icon: "💰" },
-  { name: "주거", href: "/category/housing", icon: "🏠" },
-  { name: "일자리", href: "/category/job", icon: "💼" },
-  { name: "창업", href: "/category/startup", icon: "🚀" },
-  { name: "교육/문화", href: "/category/edu", icon: "📚" },
-  { name: "교통", href: "/category/transport", icon: "🚍" },
-  { name: "건강/생활", href: "/category/life", icon: "🏥" },
-  { name: "지역별", href: "/category/region", icon: "📍" },
-];
+const categories = CATEGORY_LIST;
 
 export default function RootLayout({
   children,
@@ -135,7 +127,7 @@ export default function RootLayout({
                       href={c.href}
                       className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition whitespace-nowrap flex-shrink-0"
                     >
-                      {c.name}
+                      {c.navLabel}
                     </Link>
                   ))}
                 </nav>

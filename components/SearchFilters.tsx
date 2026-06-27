@@ -2,15 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useTransition } from "react";
+import { CATEGORY_LIST } from "@/lib/categories";
 
 const CATEGORIES = [
     { label: "전체", value: "", icon: "" },
-    { label: "금융/자산", value: "finance", icon: "💰" },
-    { label: "주거", value: "housing", icon: "🏠" },
-    { label: "일자리", value: "job", icon: "💼" },
-    { label: "교육/문화", value: "edu", icon: "📚" },
-    { label: "건강/생활", value: "life", icon: "🏥" },
-    { label: "지역별", value: "region", icon: "📍" },
+    ...CATEGORY_LIST.map((c) => ({ label: c.navLabel, value: c.slug, icon: c.icon })),
 ];
 
 const REGIONS = [

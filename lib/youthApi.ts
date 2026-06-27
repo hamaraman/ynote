@@ -78,11 +78,15 @@ export interface GetPoliciesParams {
 
 /** site 카테고리 slug -> API 정책대분류명(lclsfNm) 매핑.
  *  실제 API 응답 기반으로 2026-06-12 확인 완료. */
+// 온통청년 API는 5개 대분류(일자리/주거/교육/금융･복지･문화/참여권리)만 제공하므로
+// 창업·교통은 가장 근접한 대분류로 매핑한다. (정밀한 가이드는 로컬 마크다운이 담당)
 export const CATEGORY_TO_LCLSF: Record<string, string> = {
     finance: "금융･복지･문화",
     housing: "주거",
     job: "일자리",
+    startup: "일자리",
     edu: "교육",
+    transport: "금융･복지･문화",
     life: "금융･복지･문화",
     region: "참여권리",
 };

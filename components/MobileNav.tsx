@@ -5,17 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { useMounted } from "@/lib/hooks";
+import { CATEGORY_LIST } from "@/lib/categories";
 
-const categories = [
-    { name: "금융/자산", href: "/category/finance", icon: "💰" },
-    { name: "주거", href: "/category/housing", icon: "🏠" },
-    { name: "일자리", href: "/category/job", icon: "💼" },
-    { name: "창업", href: "/category/startup", icon: "🚀" },
-    { name: "교육/문화", href: "/category/edu", icon: "📚" },
-    { name: "교통", href: "/category/transport", icon: "🚍" },
-    { name: "건강/생활", href: "/category/life", icon: "🏥" },
-    { name: "지역별", href: "/category/region", icon: "📍" },
-];
+const categories = CATEGORY_LIST;
 
 interface MobileNavProps {
     onOpenChange?: (isOpen: boolean) => void;
@@ -136,7 +128,7 @@ export default function MobileNav({ onOpenChange }: MobileNavProps) {
                                     }`}
                                 >
                                     <span>{c.icon}</span>
-                                    <span>{c.name}</span>
+                                    <span>{c.navLabel}</span>
                                 </Link>
                             ))}
                             <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
