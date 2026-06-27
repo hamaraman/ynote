@@ -98,28 +98,6 @@ function SectionCard({ icon, title, children }: { icon: string; title: string; c
     );
 }
 
-function InfoBadge({ icon, label, value }: { icon: string; label: string; value: string | null | undefined }) {
-    if (!value) return null;
-    return (
-        <div className="flex items-start gap-2.5">
-            <span className="text-lg">{icon}</span>
-            <div>
-                <div className="text-xs text-gray-400 dark:text-gray-500">{label}</div>
-                <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">{value}</div>
-            </div>
-        </div>
-    );
-}
-
-function ChecklistItem({ text }: { text: string }) {
-    return (
-        <li className="flex items-start gap-2 py-1.5 text-sm text-gray-700 dark:text-gray-300">
-            <span className="text-teal-600 dark:text-teal-400 font-bold mt-0.5">✓</span>
-            <span>{text}</span>
-        </li>
-    );
-}
-
 export default async function PolicyPage({
                                              params,
                                          }: {

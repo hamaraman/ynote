@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileNav from "@/components/MobileNav";
@@ -91,7 +92,7 @@ export default function RootLayout({
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-4 lg:gap-6">
                 <Link href="/" className="text-xl font-bold text-teal-600 dark:text-teal-400 flex-shrink-0 flex items-center gap-1.5">
-                  <img src="/favicon.png" alt="" className="w-9 h-9 flex-shrink-0" />
+                  <Image src="/favicon.png" alt="" width={36} height={36} className="w-9 h-9 flex-shrink-0" priority />
                   청년노트
                 </Link>
                 {/* Desktop Global Search Bar */}
@@ -155,7 +156,7 @@ export default function RootLayout({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
                 <Link href="/" className="text-lg font-bold text-teal-600 dark:text-teal-400 mb-4 flex items-center gap-1.5">
-                  <img src="/favicon.png" alt="" className="w-11 h-11 flex-shrink-0" />
+                  <Image src="/favicon.png" alt="" width={44} height={44} className="w-11 h-11 flex-shrink-0" />
                   청년노트
                 </Link>
                 <p className="max-w-xs leading-relaxed">
