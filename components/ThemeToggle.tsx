@@ -1,23 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { useMounted } from "@/lib/hooks";
+
+// <html>의 dark 클래스가 현재 테마의 단일 소스.
+// (초기값은 layout의 인라인 스크립트가 페인트 전에 설정한다)
+function subscribe(callback: () => void): () => void {
+    const observer = new MutationObserver(callback);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+}
 
 export default function ThemeToggle() {
-    const [isDark, setIsDark] = useState(false);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const stored = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const dark = stored === "dark" || (!stored && prefersDark);
-        setIsDark(dark);
-        document.documentElement.classList.toggle("dark", dark);
-    }, []);
+    const mounted = useMounted();
+    const isDark = useSyncExternalStore(
+        subscribe,
+        () => document.documentElement.classList.contains("dark"),
+        () => false,
+    );
 
     const toggle = () => {
         const newDark = !isDark;
-        setIsDark(newDark);
         document.documentElement.classList.toggle("dark", newDark);
         localStorage.setItem("theme", newDark ? "dark" : "light");
     };

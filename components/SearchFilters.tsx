@@ -57,16 +57,21 @@ export default function SearchFilters({
     const [cat, setCat] = useState(defaultCat);
     const [loadedFromStorage, setLoadedFromStorage] = useState(false);
 
-    // URL 파라미터가 없는 첫 방문일 때만 이전 조건 불러오기 (클라이언트 전용)
+    // URL 파라미터가 없는 첫 방문일 때만 이전 조건(localStorage) 불러오기.
+    // 편집 가능한 폼 상태를 클라이언트 전용 값으로 마운트 후 1회 초기화하는 경우라
+    // useSyncExternalStore(읽기 전용)로는 대체할 수 없고, lazy 초기화는 안내 배너
+    // 서브트리에서 하이드레이션 불일치를 일으킨다. → effect-setState가 올바른 패턴.
     useEffect(() => {
         const hasUrlParams = !!(defaultQ || defaultAge || defaultRegion || defaultCat);
         if (!hasUrlParams) {
             const savedAge = localStorage.getItem("ynote_age") || "";
             const savedRegion = localStorage.getItem("ynote_region") || "";
             if (savedAge || savedRegion) {
+                /* eslint-disable react-hooks/set-state-in-effect */
                 if (savedAge) setAge(savedAge);
                 if (savedRegion) setRegion(savedRegion);
                 setLoadedFromStorage(true);
+                /* eslint-enable react-hooks/set-state-in-effect */
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

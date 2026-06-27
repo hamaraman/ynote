@@ -1,26 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { type BookmarkedPolicy } from "@/components/BookmarkButton";
+import { useMounted } from "@/lib/hooks";
+import { useBookmarks } from "@/lib/bookmarks";
 import PolicyCard from "@/components/PolicyCard";
 
 export default function BookmarksPage() {
-    const [bookmarks, setBookmarks] = useState<BookmarkedPolicy[]>([]);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const saved = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
-        setBookmarks(saved);
-
-        const handleUpdate = () => {
-            const updated = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
-            setBookmarks(updated);
-        };
-        window.addEventListener("bookmarks-updated", handleUpdate);
-        return () => window.removeEventListener("bookmarks-updated", handleUpdate);
-    }, []);
+    const mounted = useMounted();
+    const bookmarks = useBookmarks();
 
     if (!mounted) {
         return (

@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getAllPolicySlugs } from "@/lib/posts";
+import { CATEGORY_SLUGS } from "@/lib/categories";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr";
@@ -15,8 +16,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
     const routes = staticRoutes;
 
-    // 카테고리 페이지들
-    const categories = ["finance", "housing", "job", "edu", "life", "region"].map((cat) => ({
+    // 카테고리 페이지들 (lib/categories.ts 단일 소스에서 도출)
+    const categories = CATEGORY_SLUGS.map((cat) => ({
         url: `${baseUrl}/category/${cat}`,
         lastModified: new Date(),
         changeFrequency: "daily" as const,

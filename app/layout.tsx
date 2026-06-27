@@ -68,6 +68,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* 페인트 전에 테마를 적용해 다크모드 깜빡임(FOUC)을 막는다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('theme');var d=s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
+          }}
+        />
         {adsenseClientId && (
           // 네이티브 <script>로 렌더링해 서버 HTML <head>에 그대로 포함시킨다.
           // (next/script의 afterInteractive는 런타임 주입이라 AdSense 인증

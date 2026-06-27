@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
+import { useMounted } from "@/lib/hooks";
 
 const categories = [
     { name: "금융/자산", href: "/category/finance", icon: "💰" },
@@ -22,17 +23,8 @@ interface MobileNavProps {
 
 export default function MobileNav({ onOpenChange }: MobileNavProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
+    const mounted = useMounted();
     const pathname = usePathname();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    useEffect(() => {
-        setIsOpen(false);
-        onOpenChange?.(false);
-    }, [pathname, onOpenChange]);
 
     const toggleMenu = () => {
         const newState = !isOpen;

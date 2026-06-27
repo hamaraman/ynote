@@ -1,42 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMounted } from "@/lib/hooks";
+import { useIsBookmarked, toggleBookmark, type BookmarkedPolicy } from "@/lib/bookmarks";
 
-export interface BookmarkedPolicy {
-    id: string;
-    type: "markdown" | "api";
-    title: string;
-    description: string;
-    categorySlug: string;
-    categoryName: string;
-    aplyYmd?: string;
-    sprvsnInstCdNm?: string;
-}
+export type { BookmarkedPolicy };
 
 export default function BookmarkButton({ policy, variant = "default" }: { policy: BookmarkedPolicy; variant?: "default" | "icon" }) {
-    const [isBookmarked, setIsBookmarked] = useState(false);
-    const [mounted, setMounted] = useState(false);
+    const mounted = useMounted();
+    const isBookmarked = useIsBookmarked(policy.id);
 
-    useEffect(() => {
-        setMounted(true);
-        const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
-        setIsBookmarked(bookmarks.some((b) => b.id === policy.id));
-    }, [policy.id]);
-
-    const toggleBookmark = () => {
-        const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]") as BookmarkedPolicy[];
-        let newBookmarks: BookmarkedPolicy[];
-        if (isBookmarked) {
-            newBookmarks = bookmarks.filter((b) => b.id !== policy.id);
-        } else {
-            newBookmarks = [...bookmarks, policy];
-        }
-        localStorage.setItem("bookmarks", JSON.stringify(newBookmarks));
-        setIsBookmarked(!isBookmarked);
-        
-        // Dispatch custom event to notify other components (e.g. bookmarks list)
-        window.dispatchEvent(new Event("bookmarks-updated"));
-    };
+    const toggle = () => toggleBookmark(policy);
 
     if (!mounted) {
         if (variant === "icon") {
@@ -64,7 +37,7 @@ export default function BookmarkButton({ policy, variant = "default" }: { policy
                 onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    toggleBookmark();
+                    toggle();
                 }}
                 className={`w-9 h-9 flex items-center justify-center rounded-full border transition-all ${
                     isBookmarked
@@ -92,7 +65,7 @@ export default function BookmarkButton({ policy, variant = "default" }: { policy
 
     return (
         <button
-            onClick={toggleBookmark}
+            onClick={toggle}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg transition-all ${
                 isBookmarked
                     ? "border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 dark:border-rose-950 dark:bg-rose-950/30 dark:text-rose-400 dark:hover:bg-rose-950/50"
