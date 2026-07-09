@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
     title: "문의하기",
     description: "청년노트 운영자에게 문의 또는 제안하기.",
+    alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

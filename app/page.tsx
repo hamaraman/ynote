@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getPolicies } from "@/lib/youthApi";
 import { CATEGORY_LIST } from "@/lib/categories";
 import { getAllPolicies, type PolicyMeta } from "@/lib/posts";
 import PolicyCard from "@/components/PolicyCard";
 import { getDDay } from "@/lib/utils";
+
+export const metadata: Metadata = {
+    alternates: { canonical: "/" },
+};
 
 const categories = CATEGORY_LIST;
 

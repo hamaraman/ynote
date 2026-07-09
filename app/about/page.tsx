@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
     title: "사이트 소개",
     description: "청년노트는 청년이 받을 수 있는 정부 지원금과 혜택을 정리하는 정보 사이트입니다.",
+    alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
