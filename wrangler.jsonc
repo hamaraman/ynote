@@ -1,0 +1,21 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "main": ".open-next/worker.js",
+    "name": "ynote",
+    "compatibility_date": "2025-03-25",
+    "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+    "assets": {
+        "directory": ".open-next/assets",
+        "binding": "ASSETS"
+    },
+
+    // ISR/데이터 캐시(revalidate)를 R2에 저장 → 워커 인스턴스 간 캐시 공유
+    "r2_buckets": [
+        { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "ynote-opennext-cache" }
+    ]
+
+    // on-demand revalidation(태그 기반)을 쓰게 되면 자기참조 서비스 바인딩 추가:
+    //   "services": [
+    //     { "binding": "WORKER_SELF_REFERENCE", "service": "ynote" }
+    //   ]
+}
