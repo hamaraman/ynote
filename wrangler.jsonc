@@ -2,6 +2,8 @@
     "$schema": "node_modules/wrangler/config-schema.json",
     "main": ".open-next/worker.js",
     "name": "ynote",
+    // routes 지정 시 기본으로 꺼지므로 명시적으로 workers.dev 유지 (백업 접속 경로)
+    "workers_dev": true,
     "compatibility_date": "2025-03-25",
     "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
     "assets": {
