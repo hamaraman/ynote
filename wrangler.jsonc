@@ -12,6 +12,12 @@
     // ISR/데이터 캐시(revalidate)를 R2에 저장 → 워커 인스턴스 간 캐시 공유
     "r2_buckets": [
         { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "ynote-opennext-cache" }
+    ],
+
+    // 커스텀 도메인 — apex + www를 워커에 연결 (Cloudflare가 프록시 DNS 레코드 자동 생성)
+    "routes": [
+        { "pattern": "ynote.kr", "custom_domain": true },
+        { "pattern": "www.ynote.kr", "custom_domain": true }
     ]
 
     // on-demand revalidation(태그 기반)을 쓰게 되면 자기참조 서비스 바인딩 추가:
