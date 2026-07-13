@@ -18,7 +18,7 @@
 - TypeScript
 - Tailwind CSS v4 (`@tailwindcss/postcss`, `@tailwindcss/typography`)
 - 마크다운 처리: `gray-matter` + `remark` / `remark-html`
-- 배포: Vercel
+- 배포: Cloudflare Workers (`@opennextjs/cloudflare` 어댑터)
 
 ## 데이터 소스
 
@@ -88,4 +88,16 @@ updated: "2026-02-01"        # 선택
 
 ## 배포
 
-Vercel에 연결되어 있으며, 위 환경 변수를 프로젝트 설정에 등록해야 합니다.
+[**Cloudflare Workers**](https://opennext.js.org/cloudflare)에 `@opennextjs/cloudflare` 어댑터로 배포합니다.
+
+```bash
+npm run cf:preview   # 로컬 workerd로 프로덕션 빌드 미리보기
+npm run cf:deploy    # webpack 빌드 + Workers 배포
+```
+
+- **빌드**: Next 16 기본 Turbopack 출력이 OpenNext 런타임과 호환되지 않아(`ComponentMod.handler is not a function`) `open-next.config.ts`에서 `next build --webpack`으로 강제합니다.
+- **캐시**: ISR/데이터 캐시는 R2 버킷 `ynote-opennext-cache`(바인딩 `NEXT_INC_CACHE_R2_BUCKET`)에 저장됩니다.
+- **환경 변수**: `NEXT_PUBLIC_*`는 빌드 타임에 인라인되므로 `.env.production`에 두고, 서버 전용 시크릿(`YOUTH_API_KEY`)은 `wrangler secret put`으로 등록합니다.
+- **도메인**: `ynote.kr`·`www.ynote.kr`을 워커 커스텀 도메인으로 연결. 백업 URL은 `https://ynote.wpslvj560.workers.dev`.
+
+> Windows에서 재빌드 시 `.open-next` 삭제 권한 오류(EPERM)가 나면 workerd 프로세스를 종료하고 `.open-next` 폴더를 수동 삭제한 뒤 다시 실행하세요.
