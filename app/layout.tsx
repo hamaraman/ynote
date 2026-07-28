@@ -116,8 +116,14 @@ export default function RootLayout({
                 <MobileNav />
                 <nav className="hidden lg:flex gap-1 items-center">
                   <Link
+                    href="/calculator"
+                    className="px-3 py-2 text-sm text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/30 rounded-md transition font-semibold mr-1 flex items-center gap-1 border border-teal-100 dark:border-teal-950/50 whitespace-nowrap flex-shrink-0"
+                  >
+                    ⚡ 혜택 계산기
+                  </Link>
+                  <Link
                     href="/bookmarks"
-                    className="px-3 py-2 text-sm text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/30 rounded-md transition font-semibold mr-1.5 flex items-center gap-1 border border-teal-100 dark:border-teal-950/50 whitespace-nowrap flex-shrink-0"
+                    className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800 rounded-md transition font-medium mr-1 flex items-center gap-1 whitespace-nowrap flex-shrink-0"
                   >
                     🔖 저장함
                   </Link>

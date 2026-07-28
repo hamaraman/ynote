@@ -4,6 +4,7 @@ import { getPolicies } from "@/lib/youthApi";
 import { CATEGORY_LIST } from "@/lib/categories";
 import { getAllPolicies, type PolicyMeta } from "@/lib/posts";
 import PolicyCard from "@/components/PolicyCard";
+import PolicyCalculator from "@/components/PolicyCalculator";
 import { getDDay } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -98,6 +99,9 @@ export default async function Home() {
                 </div>
             </section>
             )}
+
+            {/* 1분 맞춤 정책 자격 진단기 & 혜택 계산기 */}
+            <PolicyCalculator />
 
             {/* 신청 마감 임박 정책 */}
             {urgentPolicies.length > 0 && (
