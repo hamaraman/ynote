@@ -131,21 +131,39 @@ export async function getPolicies(
         };
     }
     const url = buildUrl({ ...params, pageType: "1" });
-    const res = await fetch(url, { next: { revalidate: revalidateSec } });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8초 타임아웃
 
-    if (!res.ok) {
-        console.error(`청년정책 API 호출 실패: HTTP ${res.status}`);
+    try {
+        const res = await fetch(url, {
+            next: { revalidate: revalidateSec },
+            signal: controller.signal,
+        });
+        if (!res.ok) {
+            console.error(`청년정책 API 호출 실패: HTTP ${res.status}`);
+            return {
+                resultCode: res.status,
+                resultMessage: `HTTP ${res.status}`,
+                result: {
+                    pagging: { totCount: 0, pageNum: params.pageNum ?? 1, pageSize: params.pageSize ?? 10 },
+                    youthPolicyList: [],
+                },
+            };
+        }
+        return (await res.json()) as YouthApiResponse;
+    } catch (err) {
+        console.error(`청년정책 API 호출 오류: ${err instanceof Error ? err.message : "알 수 없는 오류"}`);
         return {
-            resultCode: res.status,
-            resultMessage: `HTTP ${res.status}`,
+            resultCode: 504,
+            resultMessage: "Timeout or network error",
             result: {
                 pagging: { totCount: 0, pageNum: params.pageNum ?? 1, pageSize: params.pageSize ?? 10 },
                 youthPolicyList: [],
             },
         };
+    } finally {
+        clearTimeout(timeout);
     }
-    const data = (await res.json()) as YouthApiResponse;
-    return data;
 }
 
 /** 카테고리 slug로 정책 목록 조회 */
