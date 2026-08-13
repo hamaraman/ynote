@@ -96,8 +96,9 @@ export default function LoginPage() {
                 picture: payload.picture,
             });
 
-            alert(`${payload.name}님, 로그인되었습니다!`);
-            router.push("/bookmarks");
+            // Google 콜백 직후에는 Next.js 클라이언트 라우팅이 RSC 요청과
+            // 경합할 수 있으므로, 저장 직후 전체 문서 이동으로 안정적으로 진입합니다.
+            window.location.replace("/bookmarks");
         } catch (err) {
             console.error("Token decoding error:", err);
             alert("Google 로그인 데이터를 처리하지 못했습니다.");
