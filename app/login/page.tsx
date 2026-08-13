@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { login } from "@/lib/auth";
 
 declare global {
@@ -12,18 +11,12 @@ declare global {
 }
 
 export default function LoginPage() {
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [sdkLoaded, setSdkLoaded] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
     // Google OAuth Web Client ID는 브라우저에 노출되는 공개 식별자입니다.
     // 환경변수가 없는 자동 배포 환경에서도 로그인 버튼이 동작하도록 기본값을 둡니다.
     const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-0na6m9vtnigsphmts2459q118448sqle.apps.googleusercontent.com";
-
-    // 로그인 완료 후 이동할 화면을 미리 불러와 Google 콜백 직후의 첫 라우팅을 안정화합니다.
-    useEffect(() => {
-        router.prefetch("/bookmarks");
-    }, [router]);
 
     // Load Google Identity Services SDK dynamically
     useEffect(() => {
@@ -95,11 +88,12 @@ export default function LoginPage() {
                 picture: payload.picture,
             });
 
-            // Google Identity Services 콜백이 끝난 후 이동해야 브라우저의
-            // 일시적인 오류 화면 없이 안정적으로 화면을 전환할 수 있습니다.
+            // Google 콜백이 종료된 뒤 전체 문서 이동으로 전환합니다.
+            // Cloudflare 환경에서 App Router의 RSC 전환 오류를 피하고,
+            // 주소창 직접 접속과 동일한 안정적인 경로로 북마크를 엽니다.
             isRedirecting = true;
             window.setTimeout(() => {
-                router.replace("/bookmarks");
+                window.location.assign("/bookmarks");
             }, 900);
         } catch (err) {
             console.error("Token decoding error:", err);

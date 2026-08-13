@@ -95,7 +95,7 @@ export default function Header() {
                         </button>
 
                         {/* Heart Icon (Bookmarks) */}
-                        <Link
+                        <a
                             href="/bookmarks"
                             className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative"
                             aria-label="저장한 정책"
@@ -103,12 +103,12 @@ export default function Header() {
                             <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
-                        </Link>
+                        </a>
 
                         {/* Auth Button or User Profile */}
                         {mounted && user ? (
                             <div className="flex items-center gap-2.5">
-                                <Link href="/bookmarks" className="flex items-center hover:opacity-85 transition-opacity" title="마이페이지">
+                                <a href="/bookmarks" className="flex items-center hover:opacity-85 transition-opacity" title="마이페이지">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                         src={user.picture}
@@ -118,7 +118,7 @@ export default function Header() {
                                             e.currentTarget.src = "https://lh3.googleusercontent.com/a/default-user";
                                         }}
                                     />
-                                </Link>
+                                </a>
                                 <button
                                     onClick={() => {
                                         if (confirm("로그아웃 하시겠습니까?")) {
