@@ -47,10 +47,10 @@ export default function Header() {
                         <Link href="/" className="flex items-center gap-2 group">
                             {/* Blue note style icon */}
                             <div className="w-9 h-9 rounded-xl bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform duration-200">
-                                Y
+                                청
                             </div>
                             <span className="text-xl font-black tracking-tight text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                Y노트
+                                청년노트
                             </span>
                         </Link>
 

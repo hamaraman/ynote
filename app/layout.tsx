@@ -14,24 +14,24 @@ export const metadata: Metadata = {
     ...(adsenseClientId && { "google-adsense-account": adsenseClientId }),
   },
   title: {
-    default: "Y노트 - 청년 정책 한눈에",
-    template: "%s | Y노트",
+    default: "청년노트 - 청년 정책 한눈에",
+    template: "%s | 청년노트",
   },
   description:
     "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
-  keywords: ["청년 정책", "Y노트", "청년도약계좌", "월세 지원", "내일배움카드", "청년 지원금", "정부 혜택", "청년 복지"],
-  authors: [{ name: "Y노트" }],
+  keywords: ["청년 정책", "청년노트", "청년도약계좌", "월세 지원", "내일배움카드", "청년 지원금", "정부 혜택", "청년 복지"],
+  authors: [{ name: "청년노트" }],
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    siteName: "Y노트",
-    title: "Y노트 - 청년 정책 한눈에",
+    siteName: "청년노트",
+    title: "청년노트 - 청년 정책 한눈에",
     description:
       "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Y노트 - 청년 정책 한눈에",
+    title: "청년노트 - 청년 정책 한눈에",
     description:
       "청년도약계좌, 월세지원, 내일배움카드까지 — 청년이 받을 수 있는 모든 정부 지원금과 혜택을 친근하게 정리합니다.",
   },
@@ -87,7 +87,7 @@ export default function RootLayout({
                   <div className="w-8 h-8 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-500/25">
                     Y
                   </div>
-                  Y노트
+                  청년노트
                 </Link>
                 <p className="max-w-xs leading-relaxed">
                   청년들에게 꼭 필요한 정부 정책과 혜택을 쉽고 친근하게 전달하는 정책 가이드 서비스입니다.
@@ -109,7 +109,7 @@ export default function RootLayout({
               </div>
             </div>
             <div className="pt-8 border-t border-gray-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-              <p>© 2026 Y노트. 정책 정보는 공식 출처 기반이며, 정확한 내용은 해당 기관에서 확인하세요.</p>
+              <p>© 2026 청년노트. 정책 정보는 공식 출처 기반이며, 정확한 내용은 해당 기관에서 확인하세요.</p>
               <div className="flex gap-4">
                 <span className="text-gray-400">Powered by 온통청년 API</span>
               </div>

@@ -142,8 +142,8 @@ export default function Home() {
                             {/* Inner Accent Cover */}
                             <rect x="100" y="170" width="160" height="100" rx="10" transform="rotate(-10, 180, 220)" fill="url(#bookCoverGrad)" />
 
-                            {/* Logo Y on book */}
-                            <text x="180" y="240" fill="#FFFFFF" fontSize="64" fontWeight="900" fontFamily="Pretendard, system-ui" textAnchor="middle" transform="rotate(-10, 180, 220)">Y</text>
+                            {/* Logo on the book */}
+                            <text x="180" y="240" fill="#FFFFFF" fontSize="56" fontWeight="900" fontFamily="Pretendard, system-ui" textAnchor="middle" transform="rotate(-10, 180, 220)">청</text>
                         </g>
 
                         {/* Person Silhouette working on laptop */}
