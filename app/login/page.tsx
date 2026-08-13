@@ -103,23 +103,6 @@ export default function LoginPage() {
             setIsLoading(false);
         }
     };
-
-    // Fallback manual login function for local debugging or if SDK fails/no client ID set
-    const handleMockGoogleLogin = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            login({
-                id: "1234567890",
-                name: "홍길동 (데모)",
-                email: "gildong.hong@gmail.com",
-                picture: "https://lh3.googleusercontent.com/a/default-user",
-            });
-            setIsLoading(false);
-            alert("데모 구글 계정으로 로그인되었습니다! (실제 사용시 .env에 Client ID를 등록하세요)");
-            router.push("/bookmarks");
-        }, 1000);
-    };
-
     return (
         <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50/50 dark:bg-slate-950/20 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-slate-900 border border-gray-150 dark:border-slate-800 rounded-3xl p-8 md:p-10 shadow-lg">
@@ -150,18 +133,8 @@ export default function LoginPage() {
                             <span className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
                         </div>
                     ) : (
-                        <>
-                            {/* Target container for standard Google button */}
-                            <div ref={buttonRef} className="w-full flex justify-center" />
-
-                            {/* Demo/Fallback Test Button (shows up for testing if client id is not configured or fails) */}
-                            <button
-                                onClick={handleMockGoogleLogin}
-                                className="w-full max-w-[320px] bg-slate-50 hover:bg-slate-100 dark:bg-slate-850 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-slate-700 py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
-                            >
-                                <span>개발 테스트용 데모 로그인</span>
-                            </button>
-                        </>
+                        /* Target container for standard Google button */
+                        <div ref={buttonRef} className="w-full flex justify-center" />
                     )}
                 </div>
 
