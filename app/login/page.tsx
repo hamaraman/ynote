@@ -19,7 +19,7 @@ export default function LoginPage() {
     const buttonRef = useRef<HTMLDivElement>(null);
     // Google OAuth Web Client ID는 브라우저에 노출되는 공개 식별자입니다.
     // 환경변수가 없는 자동 배포 환경에서도 로그인 버튼이 동작하도록 기본값을 둡니다.
-    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-hc4kfvhngsfvjmk62e2ia0096bf835rs.apps.googleusercontent.com";
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-0na6m9vtnigsphmts2459q118448sqle.apps.googleusercontent.com";
 
     // If already logged in, redirect to bookmarks page
     useEffect(() => {
