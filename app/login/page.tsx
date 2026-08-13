@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { login, useUser } from "@/lib/auth";
+import { login } from "@/lib/auth";
 
 declare global {
     interface Window {
@@ -13,21 +13,12 @@ declare global {
 
 export default function LoginPage() {
     const router = useRouter();
-    const user = useUser();
     const [isLoading, setIsLoading] = useState(false);
     const [sdkLoaded, setSdkLoaded] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
     // Google OAuth Web Client ID는 브라우저에 노출되는 공개 식별자입니다.
     // 환경변수가 없는 자동 배포 환경에서도 로그인 버튼이 동작하도록 기본값을 둡니다.
     const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-0na6m9vtnigsphmts2459q118448sqle.apps.googleusercontent.com";
-
-    // 이미 로그인된 사용자는 즉시 진입시키되, Google 콜백 처리 중에는
-    // 아래의 지연 전환이 완료될 때까지 이 효과가 먼저 라우팅하지 않게 합니다.
-    useEffect(() => {
-        if (user && !isLoading) {
-            router.replace("/bookmarks");
-        }
-    }, [user, isLoading, router]);
 
     // 로그인 완료 후 이동할 화면을 미리 불러와 Google 콜백 직후의 첫 라우팅을 안정화합니다.
     useEffect(() => {
@@ -109,7 +100,7 @@ export default function LoginPage() {
             isRedirecting = true;
             window.setTimeout(() => {
                 router.replace("/bookmarks");
-            }, 400);
+            }, 900);
         } catch (err) {
             console.error("Token decoding error:", err);
             alert("Google 로그인 데이터를 처리하지 못했습니다.");
