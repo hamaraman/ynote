@@ -17,6 +17,9 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [sdkLoaded, setSdkLoaded] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
+    // Google OAuth Web Client ID는 브라우저에 노출되는 공개 식별자입니다.
+    // 환경변수가 없는 자동 배포 환경에서도 로그인 버튼이 동작하도록 기본값을 둡니다.
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-hc4kfvhngsfvjmk62e2ia0096bf835rs.apps.googleusercontent.com";
 
     // If already logged in, redirect to bookmarks page
     useEffect(() => {
@@ -34,8 +37,7 @@ export default function LoginPage() {
             if (window.google?.accounts?.id) {
                 setSdkLoaded(true);
                 window.google.accounts.id.initialize({
-                    // Client ID configured via environment variables or demo fallback
-                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "1094038475225-placeholder.apps.googleusercontent.com",
+                    client_id: googleClientId,
                     callback: handleCredentialResponse,
                 });
 
@@ -70,7 +72,7 @@ export default function LoginPage() {
                 window.google.accounts.id.cancelPrompt();
             }
         };
-    }, []);
+    }, [googleClientId]);
 
     const handleCredentialResponse = (response: any) => {
         setIsLoading(true);
@@ -111,17 +113,17 @@ export default function LoginPage() {
                 <div className="text-center space-y-3">
                     <div className="inline-flex items-center gap-2 justify-center group">
                         <div className="w-10 h-10 rounded-xl bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-blue-500/25">
-                            Y
+                            청
                         </div>
                         <span className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">
-                            Y노트
+                            청년노트
                         </span>
                     </div>
                     <h2 className="text-xl font-black text-gray-900 dark:text-white pt-2">
-                        Y노트에 오신 것을 환영합니다
+                        청년노트에 오신 것을 환영합니다
                     </h2>
                     <p className="text-xs font-bold text-gray-400 dark:text-gray-500 leading-relaxed max-w-xs mx-auto">
-                        청년 정책 비서 Y노트와 함께<br />
+                        청년 정책 비서 청년노트와 함께<br />
                         나에게 딱 맞는 혜택과 정보를 놓치지 마세요.
                     </p>
                 </div>
