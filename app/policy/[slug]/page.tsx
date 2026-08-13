@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllPolicySlugs, getPolicyBySlug } from "@/lib/posts";
-import { getPolicyDetail, getPoliciesByCategory, formatYmd } from "@/lib/youthApi";
-import BookmarkButton from "@/components/BookmarkButton";
+import { getPolicyDetail, formatYmd } from "@/lib/youthApi";
+import { getDDay } from "@/lib/utils";
+import PolicyDetailClient from "./PolicyDetailClient";
 
 function isPlcyNo(slug: string): boolean {
     return /^\d{10,}/.test(slug);
@@ -37,8 +37,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({
-                                           params,
-                                       }: {
+    params,
+}: {
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
     const { slug } = await params;
@@ -50,7 +50,7 @@ export async function generateMetadata({
         return {
             title,
             description,
-            keywords: [title, markdownPolicy.category, "청년 정책", "정부 지원"],
+            keywords: [title, markdownPolicy.category, "Y노트", "청년 정책", "정부 지원"],
             openGraph: { title, description, type: "article" },
             twitter: { card: "summary_large_image", title, description },
             alternates: { canonical: `/policy/${slug}` },
@@ -65,6 +65,7 @@ export async function generateMetadata({
             const keywords = [
                 title,
                 ...(apiPolicy.plcyKywdNm?.split(",").map((k) => k.trim()).filter(Boolean) ?? []),
+                "Y노트",
                 "청년 정책",
                 "정부 지원",
             ];
@@ -82,101 +83,155 @@ export async function generateMetadata({
     return {};
 }
 
-function SectionCard({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) {
-    return (
-        <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
-            <div className="bg-slate-50/50 dark:bg-slate-800/40 px-6 py-4 border-b border-gray-100 dark:border-slate-800/60">
-                <h2 className="font-bold text-lg flex items-center gap-2.5 text-gray-800 dark:text-gray-100">
-                    <span className="text-xl">{icon}</span>
-                    <span>{title}</span>
-                </h2>
-            </div>
-            <div className="p-6">
-                {children}
-            </div>
-        </div>
-    );
-}
+// Custom hardcoded detail values for mock policies shown in layout to look identical
+const MOCK_POLICY_DETAILS: Record<string, any> = {
+    "youth-rent-support": {
+        id: "youth-rent-support",
+        title: "청년 월세 한시 특별지원",
+        category: "주거",
+        categorySlug: "housing",
+        description: "월 최대 20만원씩 최대 12개월 지원",
+        targetTags: ["만 19~34세", "무주택", "소득기준"],
+        deadline: "2024.06.30",
+        dday: "D-12",
+        amount: "월 최대 20만원 x 12개월",
+        targetDesc: "만 19~34세 무주택 청년",
+        details: {
+            intro: "경제적 어려움을 겪는 청년들의 주거비 부담을 덜어드리기 위해 월세를 지원하는 사업입니다.",
+            projectPeriod: "2024.01.01 ~ 2024.12.31",
+            applyPeriod: "2024.02.26 ~ 2024.06.30",
+            agency: "국토교통부",
+            contact: "1600-0777",
+            eligibility: "만 19세~34세 부모와 별도로 거주하는 무주택 청년으로, 청년 독립가구 소득이 기준 중위소득 60% 이하이면서 원가구 소득이 기준 중위소득 100% 이하여야 합니다.",
+            supportDetails: "실제 납부하는 임차료 범위 내에서 월 최대 20만 원씩 최대 12개월(회)에 걸쳐 지원합니다. (보증금 및 관리비 제외)",
+            applyMethod: "복지로 홈페이지(www.bokjiro.go.kr) 또는 거주지 주소지 관할 행정복지센터(주민센터)에 직접 방문하여 신청할 수 있습니다.",
+            documents: "임대차계약서, 임차료 납부 증빙 서류, 통장 사본, 가족관계증명서 등이 필요합니다.",
+            faq: "Q. 부모님과 같이 살고 있는데 지원받을 수 있나요?\nA. 아니오, 부모님과 세대를 분리하여 별도로 거주하는 무주택 청년만 대상입니다."
+        },
+        applyUrl: "https://www.bokjiro.go.kr"
+    },
+    "youth-work-experience": {
+        id: "youth-work-experience",
+        title: "청년 일경험 지원사업",
+        category: "취업",
+        categorySlug: "job",
+        description: "월 최대 234만원 지원",
+        targetTags: ["만 15~34세", "미취업 청년", "경력형성"],
+        deadline: "2024.06.21",
+        dday: "D-3",
+        amount: "월 최대 234만원",
+        targetDesc: "만 15~34세 미취업 청년",
+        details: {
+            intro: "청년들이 직무를 경험하고 일자리를 찾을 수 있도록 실무 기회를 제공하는 프로그램입니다.",
+            projectPeriod: "2024.01.01 ~ 2024.12.31",
+            applyPeriod: "2024.03.02 ~ 2024.06.21",
+            agency: "고용노동부",
+            contact: "1350",
+            eligibility: "신청일 기준 만 15세 이상 34세 이하의 미취업 청년이 대상입니다.",
+            supportDetails: "참여 기간 동안 주 20~40시간 근무 기준 월 최대 234만원의 참여 수당 및 일경험 학습 멘토링을 지원합니다.",
+            applyMethod: "고용노동부 청년일경험 홈페이지를 통해 온라인으로 원하는 직무와 참여 기업을 선택하여 신청할 수 있습니다.",
+            documents: "참여 신청서, 개인정보동의서, 졸업증명서 또는 재학증명서 등이 필요합니다.",
+            faq: "Q. 대학 재학생도 참여 가능한가요?\nA. 예, 졸업 예정자나 휴학생도 미취업 상태인 경우 참여 가능합니다."
+        },
+        applyUrl: "https://www.work.go.kr"
+    },
+    "learning-card": {
+        id: "learning-card",
+        title: "국민내일배움카드",
+        category: "교육",
+        categorySlug: "edu",
+        description: "최대 500만원 지원",
+        targetTags: ["취업준비생", "직장인", "직무교육"],
+        deadline: "상시신청",
+        dday: "상시",
+        amount: "최대 500만원",
+        targetDesc: "취업준비생, 직장인 등",
+        details: {
+            intro: "일자리를 구하고 있는 취업준비생이나 이직을 준비하는 재직자들에게 직업훈련 비용을 지원하는 카드입니다.",
+            projectPeriod: "연중 상시",
+            applyPeriod: "연중 상시",
+            agency: "고용노동부",
+            contact: "1350",
+            eligibility: "대한민국 국민이라면 누구나 신청 가능합니다. (공무원, 사립학교 교직원, 일정 소득 이상의 자영업자 등 제외)",
+            supportDetails: "5년간 300만원에서 최대 500만원의 훈련비를 지원하며, 일부 직종의 경우 훈련 수당도 추가로 지급합니다.",
+            applyMethod: "직업훈련포털 HRD-Net 홈페이지(www.hrd.go.kr) 또는 가까운 고용센터에 직접 방문 신청이 가능합니다.",
+            documents: "신분증, 계좌 발급 신청서, 자격 증빙 서류 등이 필요합니다.",
+            faq: "Q. 유효기간은 어떻게 되나요?\nA. 카드 발급일로부터 5년간 사용할 수 있습니다."
+        },
+        applyUrl: "https://www.hrd.go.kr"
+    },
+    "pre-startup-package": {
+        id: "pre-startup-package",
+        title: "청년 창업 지원사업",
+        category: "창업",
+        categorySlug: "startup",
+        description: "최대 1억원 지원",
+        targetTags: ["예비창업자", "3년이내", "사업화"],
+        deadline: "2024.07.05",
+        dday: "D-18",
+        amount: "최대 1억원 지원",
+        targetDesc: "예비창업자, 3년 이내 창업자",
+        details: {
+            intro: "혁신적인 창업 아이디어를 보유한 예비 청년 창업자들에게 사업화 자금과 멘토링을 지원하는 사업입니다.",
+            projectPeriod: "2024.01.01 ~ 2024.12.31",
+            applyPeriod: "2024.05.10 ~ 2024.07.05",
+            agency: "중소벤처기업부",
+            contact: "1357",
+            eligibility: "공고일 기준 사업자 등록이 없는 만 39세 이하의 예비 창업자 및 3년 이내 초기 창업자가 대상입니다.",
+            supportDetails: "시제품 제작, 지식재산권 취득, 마케팅 등에 소요되는 사업화 자금을 최대 1억 원(평균 5,000만 원)까지 지원합니다.",
+            applyMethod: "K-Startup 홈페이지(www.k-startup.go.kr)를 통해 온라인 접수 신청합니다.",
+            documents: "창업 사업계획서, 신분증 양식 등이 필요합니다.",
+            faq: "Q. 직장에 재직 중이어도 신청할 수 있나요?\nA. 예, 신청 시점에는 상관없으나 협약 체결 후 사업자등록을 완료해야 합니다."
+        },
+        applyUrl: "https://www.k-startup.go.kr"
+    }
+};
 
 export default async function PolicyPage({
-                                             params,
-                                         }: {
+    params,
+}: {
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
 
-    const markdownPolicy = await getPolicyBySlug(slug);
-
-    if (markdownPolicy) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr";
-        const mdJsonLd = {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: markdownPolicy.title,
-            description: markdownPolicy.description,
-            url: `${siteUrl}/policy/${slug}`,
-            datePublished: markdownPolicy.date,
-            ...(markdownPolicy.updated ? { dateModified: markdownPolicy.updated } : {}),
-            author: { "@type": "Organization", name: "청년노트" },
-            publisher: {
-                "@type": "Organization",
-                name: "청년노트",
-                url: siteUrl,
-            },
-        };
-        return (
-            <article className="max-w-3xl mx-auto px-4 py-12">
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(mdJsonLd) }}
-                />
-                <div className="mb-4 flex justify-between items-center">
-                    <Link
-                        href={`/category/${markdownPolicy.categorySlug}`}
-                        className="text-sm text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-medium"
-                    >
-                        <span>←</span> {markdownPolicy.category}
-                    </Link>
-                    <BookmarkButton policy={{
-                        id: slug,
-                        type: "markdown",
-                        title: markdownPolicy.title,
-                        description: markdownPolicy.description || "",
-                        categorySlug: markdownPolicy.categorySlug,
-                        categoryName: markdownPolicy.category,
-                        aplyYmd: markdownPolicy.date
-                    }} />
-                </div>
-                <div className="bg-teal-50 dark:bg-teal-950/20 rounded-2xl p-5 mb-8 border border-teal-100/50 dark:border-teal-900/20">
-                    <div className="flex flex-wrap gap-6 text-sm">
-                        <div>
-                            <div className="text-xs text-teal-700 dark:text-teal-400 mb-1">카테고리</div>
-                            <div className="font-semibold text-teal-900 dark:text-teal-300">{markdownPolicy.category}</div>
-                        </div>
-                        <div>
-                            <div className="text-xs text-teal-700 dark:text-teal-400 mb-1">작성일</div>
-                            <div className="font-semibold text-teal-900 dark:text-teal-300">{markdownPolicy.date}</div>
-                        </div>
-                        {markdownPolicy.updated && (
-                            <div>
-                                <div className="text-xs text-teal-700 dark:text-teal-400 mb-1">최종 업데이트</div>
-                                <div className="font-semibold text-teal-900 dark:text-teal-300">{markdownPolicy.updated}</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight tracking-tight text-gray-900 dark:text-gray-100">
-                    {markdownPolicy.title}
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400 text-lg mb-8 leading-relaxed">{markdownPolicy.description}</p>
-                <div
-                    className="prose prose-gray dark:prose-invert max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h3:text-xl prose-h3:mt-8 prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-strong:text-gray-900 dark:prose-strong:text-white"
-                    dangerouslySetInnerHTML={{ __html: markdownPolicy.contentHtml }}
-                />
-            </article>
-        );
+    // Check if it's one of the mock policies
+    if (MOCK_POLICY_DETAILS[slug]) {
+        return <PolicyDetailClient policy={MOCK_POLICY_DETAILS[slug]} />;
     }
 
+    // 1. Check local markdown guide
+    const markdownPolicy = await getPolicyBySlug(slug);
+    if (markdownPolicy) {
+        const ddayVal = getDDay(markdownPolicy.date, markdownPolicy.updated || markdownPolicy.date);
+        const mappedPolicy = {
+            id: slug,
+            title: markdownPolicy.title,
+            category: markdownPolicy.category,
+            categorySlug: markdownPolicy.categorySlug,
+            description: markdownPolicy.description || "",
+            targetTags: markdownPolicy.tags || [],
+            deadline: markdownPolicy.date,
+            dday: ddayVal !== null ? `D-${ddayVal}` : "상시",
+            amount: "상세 가이드 참고",
+            targetDesc: "만 19~34세 청년",
+            details: {
+                intro: markdownPolicy.description || "이 정책의 가이드라인 요약정보입니다.",
+                projectPeriod: "연중 진행",
+                applyPeriod: markdownPolicy.date,
+                agency: "보건복지부 / 행정안전부 등",
+                contact: "고객센터 문의",
+                eligibility: "각 시도별 공고 및 본문 내용을 상세히 참조하시기 바랍니다.",
+                supportDetails: "본문 설명과 관련 링크의 공식 사이트에서 한도를 확인해보실 수 있습니다.",
+                applyMethod: "아래 제공된 가이드를 상세히 읽고 신청처 링크를 확인하세요.",
+                documents: "주민등록등본, 본인 신분증, 소득 및 자산 증빙 자료 등 기본 서류 구비 요망.",
+                faq: "자세한 설명은 관련 본문 가이드북 내용을 참조 바랍니다."
+            },
+            applyUrl: "/search"
+        };
+        return <PolicyDetailClient policy={mappedPolicy} />;
+    }
+
+    // 2. Check API policy
     if (!isPlcyNo(slug)) notFound();
 
     const apiPolicy = await getPolicyDetail(slug);
@@ -184,344 +239,35 @@ export default async function PolicyPage({
 
     const catSlug = getCategorySlug(apiPolicy.lclsfNm);
     const catName = getCategoryName(apiPolicy.lclsfNm);
+    const ddayVal = getDDay(apiPolicy.aplyYmd, apiPolicy.bizPrdEndYmd);
 
-    // 관련 정책 조회
-    let relatedPolicies: Awaited<ReturnType<typeof getPoliciesByCategory>>["result"]["youthPolicyList"] = [];
-    try {
-        const relatedData = await getPoliciesByCategory(catSlug, 1, 6);
-        relatedPolicies = (relatedData.result?.youthPolicyList ?? []).filter(p => p.plcyNo !== slug).slice(0, 4);
-    } catch { /* ignore */ }
-
-    // 키워드 추출
-    const keywords = apiPolicy.plcyKywdNm?.split(",").filter(Boolean) || [];
-
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ynote.kr";
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "GovernmentService",
-        name: apiPolicy.plcyNm,
+    const mappedPolicy = {
+        id: slug,
+        title: apiPolicy.plcyNm,
+        category: catName,
+        categorySlug: catSlug,
         description: apiPolicy.plcyExplnCn,
-        url: `${baseUrl}/policy/${slug}`,
-        provider: {
-            "@type": "GovernmentOrganization",
-            name: apiPolicy.sprvsnInstCdNm || "대한민국 정부",
+        targetTags: apiPolicy.plcyKywdNm?.split(",").map(k => k.trim()).filter(Boolean) || [],
+        deadline: apiPolicy.aplyYmd ? apiPolicy.aplyYmd.slice(0, 10) : "상시신청",
+        dday: ddayVal !== null ? `D-${ddayVal}` : "상시",
+        amount: apiPolicy.plcySprtCn?.slice(0, 50) || "상세 내용 확인",
+        targetDesc: apiPolicy.sprtTrgtAgeLmtYn === "Y"
+            ? `만 ${apiPolicy.sprtTrgtMinAge || 19}~${apiPolicy.sprtTrgtMaxAge || 34}세 청년`
+            : "연령 제한 없음",
+        details: {
+            intro: apiPolicy.plcyExplnCn,
+            projectPeriod: apiPolicy.bizPrdBgngYmd ? `${formatYmd(apiPolicy.bizPrdBgngYmd)} ~ ${formatYmd(apiPolicy.bizPrdEndYmd)}` : "상시",
+            applyPeriod: apiPolicy.aplyYmd || "상시 신청",
+            agency: apiPolicy.sprvsnInstCdNm || "대한민국 정부",
+            contact: apiPolicy.operInstCdNm || "해당 고객센터",
+            eligibility: `${apiPolicy.earnEtcCn || ""}\n${apiPolicy.addAplyQlfcCndCn || ""}\n${apiPolicy.ptcpPrpTrgtCn ? `참여제한: ${apiPolicy.ptcpPrpTrgtCn}` : ""}`,
+            supportDetails: apiPolicy.plcySprtCn,
+            applyMethod: apiPolicy.plcyAplyMthdCn || "공식 사이트 참고",
+            documents: apiPolicy.sbmsnDcmntCn || "기본 제출 서류 없음",
+            faq: apiPolicy.etcMttrCn || "특이사항 및 추가 고시 내용 없음"
         },
-        ...(apiPolicy.aplyUrlAddr ? { serviceUrl: apiPolicy.aplyUrlAddr } : {}),
-        ...(apiPolicy.plcyKywdNm
-            ? { keywords: apiPolicy.plcyKywdNm.split(",").map((k) => k.trim()).filter(Boolean) }
-            : {}),
-        audience: {
-            "@type": "Audience",
-            audienceType: apiPolicy.sprtTrgtAgeLmtYn === "Y"
-                ? `만 ${apiPolicy.sprtTrgtMinAge || 19}세~${apiPolicy.sprtTrgtMaxAge || 34}세 청년`
-                : "청년",
-        },
+        applyUrl: apiPolicy.aplyUrlAddr
     };
 
-    return (
-        <article className="max-w-5xl mx-auto px-4 py-12">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
-            {/* 헤더 */}
-            <div className="mb-6 flex justify-between items-center">
-                <Link href={`/category/${catSlug}`} className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
-                    <span>←</span> {catName}
-                </Link>
-                <BookmarkButton policy={{
-                    id: slug,
-                    type: "api",
-                    title: apiPolicy.plcyNm,
-                    description: apiPolicy.plcyExplnCn,
-                    categorySlug: catSlug,
-                    categoryName: catName,
-                    aplyYmd: apiPolicy.aplyYmd || "상시 신청",
-                    sprvsnInstCdNm: apiPolicy.sprvsnInstCdNm
-                }} />
-            </div>
-
-            {/* Hero Section */}
-            <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 dark:from-slate-900 dark:to-slate-800 border border-transparent dark:border-slate-800 rounded-3xl p-6 md:p-8 text-white mb-10 shadow-lg relative overflow-hidden">
-                {/* Decorative background glow for dark mode */}
-                <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-teal-500/10 blur-3xl pointer-events-none hidden dark:block" />
-                <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none hidden dark:block" />
-
-                <div className="flex flex-wrap gap-2 mb-4 relative z-10">
-                    <span className="text-xs px-3 py-1 bg-white/20 dark:bg-teal-500/20 text-white dark:text-teal-300 font-semibold rounded-full backdrop-blur-sm">{catName}</span>
-                    {apiPolicy.mclsfNm && (
-                        <span className="text-xs px-3 py-1 bg-white/20 dark:bg-slate-700 text-white dark:text-slate-300 rounded-full backdrop-blur-sm">{apiPolicy.mclsfNm}</span>
-                    )}
-                </div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4 leading-tight tracking-tight relative z-10 text-white dark:text-gray-100">
-                    {apiPolicy.plcyNm}
-                </h1>
-                <p className="text-white/90 dark:text-gray-300 text-sm md:text-base leading-relaxed mb-6 max-w-3xl relative z-10">
-                    {apiPolicy.plcyExplnCn}
-                </p>
-
-                {/* 키워드 태그 */}
-                {keywords.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6 relative z-10">
-                        {keywords.slice(0, 5).map((kw, i) => (
-                            <span key={i} className="text-xs px-2.5 py-1 bg-white/10 dark:bg-slate-800/60 text-white/95 dark:text-slate-300 rounded-lg">
-                                #{kw.trim()}
-                            </span>
-                        ))}
-                    </div>
-                )}
-
-                {/* 핵심 정보 */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10 border-t border-white/10 dark:border-slate-800/80 pt-6 mt-6">
-                    <div className="bg-white/10 dark:bg-slate-800/40 rounded-xl p-4 backdrop-blur-sm">
-                        <div className="text-white/70 dark:text-gray-400 text-[11px] mb-1 font-medium flex items-center gap-1"><span>📅</span> 신청기간</div>
-                        <div className="font-semibold text-sm">
-                            {apiPolicy.aplyYmd ? (
-                                <span className="line-clamp-2 text-xs md:text-sm" title={apiPolicy.aplyYmd}>{apiPolicy.aplyYmd}</span>
-                            ) : "상시 신청"}
-                        </div>
-                    </div>
-                    <div className="bg-white/10 dark:bg-slate-800/40 rounded-xl p-4 backdrop-blur-sm">
-                        <div className="text-white/70 dark:text-gray-400 text-[11px] mb-1 font-medium flex items-center gap-1"><span>🏛️</span> 주관기관</div>
-                        <div className="font-semibold text-xs md:text-sm truncate" title={apiPolicy.sprvsnInstCdNm || ""}>
-                            {apiPolicy.sprvsnInstCdNm || "-"}
-                        </div>
-                    </div>
-                    <div className="bg-white/10 dark:bg-slate-800/40 rounded-xl p-4 backdrop-blur-sm">
-                        <div className="text-white/70 dark:text-gray-400 text-[11px] mb-1 font-medium flex items-center gap-1"><span>👤</span> 지원대상</div>
-                        <div className="font-semibold text-xs md:text-sm truncate">
-                            {apiPolicy.sprtTrgtAgeLmtYn === "Y"
-                                ? `만 ${apiPolicy.sprtTrgtMinAge || 19}~${apiPolicy.sprtTrgtMaxAge || 34}세`
-                                : "연령 제한 없음"}
-                        </div>
-                    </div>
-                    <div className="bg-white/10 dark:bg-slate-800/40 rounded-xl p-4 backdrop-blur-sm">
-                        <div className="text-white/70 dark:text-gray-400 text-[11px] mb-1 font-medium flex items-center gap-1"><span>💼</span> 사업기간</div>
-                        <div className="font-semibold text-xs md:text-sm truncate">
-                            {apiPolicy.bizPrdBgngYmd ? `${formatYmd(apiPolicy.bizPrdBgngYmd)} ~ ${formatYmd(apiPolicy.bizPrdEndYmd)}` : "상시"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Grid Layout: Left Column (Details) vs Right Column (Sidebar) */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                {/* Left Column */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* 지원 내용 */}
-                    {apiPolicy.plcySprtCn && (
-                        <SectionCard icon="💰" title="지원 내용">
-                            <div className="bg-amber-50/40 dark:bg-amber-950/20 border border-amber-100/30 dark:border-amber-950/10 rounded-2xl p-5 text-sm md:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
-                                {apiPolicy.plcySprtCn}
-                            </div>
-                        </SectionCard>
-                    )}
-
-                    {/* 지원 대상 */}
-                    <SectionCard icon="👤" title="지원 대상">
-                        <div className="grid md:grid-cols-2 gap-4 mb-4">
-                            <div className="bg-teal-50/40 dark:bg-teal-950/20 border border-teal-100/30 dark:border-teal-950/10 rounded-xl p-4">
-                                <div className="text-xs text-teal-700 dark:text-teal-400 mb-1.5 font-semibold">연령 조건</div>
-                                <div className="font-bold text-teal-900 dark:text-teal-300">
-                                    {apiPolicy.sprtTrgtAgeLmtYn === "Y"
-                                        ? `만 ${apiPolicy.sprtTrgtMinAge || 19}세 ~ 만 ${apiPolicy.sprtTrgtMaxAge || 34}세`
-                                        : "연령 제한 없음"}
-                                </div>
-                            </div>
-                            <div className="bg-teal-50/40 dark:bg-teal-950/20 border border-teal-100/30 dark:border-teal-950/10 rounded-xl p-4">
-                                <div className="text-xs text-teal-700 dark:text-teal-400 mb-1.5 font-semibold">소득 조건</div>
-                                <div className="font-bold text-teal-900 dark:text-teal-300 whitespace-pre-wrap">
-                                    {apiPolicy.earnEtcCn || "소득 제한 없음"}
-                                </div>
-                            </div>
-                        </div>
-
-                        {apiPolicy.addAplyQlfcCndCn && (
-                            <div className="bg-blue-50/40 dark:bg-blue-950/20 border border-blue-100/30 dark:border-blue-950/10 rounded-xl p-4 mb-4">
-                                <div className="text-xs font-bold text-blue-800 dark:text-blue-400 mb-2 flex items-center gap-1">
-                                    <span>💡</span> 추가 자격 조건
-                                </div>
-                                <div className="text-sm text-blue-900 dark:text-blue-300 whitespace-pre-wrap leading-relaxed">{apiPolicy.addAplyQlfcCndCn}</div>
-                            </div>
-                        )}
-
-                        {apiPolicy.ptcpPrpTrgtCn && (
-                            <div className="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/30 dark:border-rose-950/10 rounded-xl p-4">
-                                <div className="text-xs font-bold text-rose-800 dark:text-rose-400 mb-2 flex items-center gap-1">
-                                    <span>⚠️</span> 참여 제한 대상
-                                </div>
-                                <div className="text-sm text-rose-900 dark:text-rose-300 whitespace-pre-wrap leading-relaxed">{apiPolicy.ptcpPrpTrgtCn}</div>
-                            </div>
-                        )}
-                    </SectionCard>
-
-                    {/* 신청 방법 */}
-                    {apiPolicy.plcyAplyMthdCn && (
-                        <SectionCard icon="📝" title="신청 방법">
-                            <div className="text-sm md:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed bg-slate-50/50 dark:bg-slate-800/30 border border-gray-100 dark:border-slate-800 rounded-xl p-5">
-                                {apiPolicy.plcyAplyMthdCn}
-                            </div>
-                        </SectionCard>
-                    )}
-
-                    {/* 제출 서류 */}
-                    {apiPolicy.sbmsnDcmntCn && (
-                        <SectionCard icon="📋" title="제출 서류">
-                            <div className="text-sm md:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed bg-slate-50/50 dark:bg-slate-800/30 border border-gray-100 dark:border-slate-800 rounded-xl p-5">
-                                {apiPolicy.sbmsnDcmntCn}
-                            </div>
-                        </SectionCard>
-                    )}
-
-                    {/* 심사 방법 */}
-                    {apiPolicy.srngMthdCn && (
-                        <SectionCard icon="🔍" title="심사 방법">
-                            <div className="text-sm md:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed bg-slate-50/50 dark:bg-slate-800/30 border border-gray-100 dark:border-slate-800 rounded-xl p-5">
-                                {apiPolicy.srngMthdCn}
-                            </div>
-                        </SectionCard>
-                    )}
-
-                    {/* 참고 사항 */}
-                    {apiPolicy.etcMttrCn && (
-                        <SectionCard icon="ℹ️" title="참고 사항">
-                            <div className="text-sm md:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed bg-slate-50/50 dark:bg-slate-800/30 border border-gray-100 dark:border-slate-800 rounded-xl p-5">
-                                {apiPolicy.etcMttrCn}
-                            </div>
-                        </SectionCard>
-                    )}
-                </div>
-
-                {/* Right Column (Sidebar) */}
-                <div className="space-y-6 lg:sticky lg:top-24">
-                    {/* Quick Apply Action */}
-                    <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm">
-                        <h3 className="text-base font-bold mb-4 text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                            <span>⚡</span> 빠른 신청
-                        </h3>
-                        <div className="space-y-3">
-                            {apiPolicy.aplyUrlAddr ? (
-                                <a
-                                    href={apiPolicy.aplyUrlAddr}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg active:scale-98 text-sm"
-                                >
-                                    <span>공식 신청 페이지 이동</span>
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                </a>
-                            ) : (
-                                <a
-                                    href="https://www.youthcenter.go.kr"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg active:scale-98 text-sm"
-                                >
-                                    <span>온통청년 신청 바로가기</span>
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                </a>
-                            )}
-
-                            <Link
-                                href={`/category/${catSlug}`}
-                                className="w-full flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-800 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-medium border border-gray-100 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm"
-                            >
-                                다른 정책 둘러보기
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Reference Links */}
-                    {(apiPolicy.refUrlAddr1 || apiPolicy.refUrlAddr2) && (
-                        <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-sm font-bold mb-3 text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                                <span>🔗</span> 참고 링크
-                            </h3>
-                            <ul className="space-y-2.5">
-                                {apiPolicy.refUrlAddr1 && (
-                                    <li>
-                                        <a href={apiPolicy.refUrlAddr1} target="_blank" rel="noopener noreferrer"
-                                           className="flex items-center gap-2 text-teal-600 dark:text-teal-400 hover:underline text-sm font-medium">
-                                            <span>•</span>
-                                            <span className="truncate break-all max-w-[170px]" title={apiPolicy.refUrlAddr1}>
-                                                {new URL(apiPolicy.refUrlAddr1).hostname}
-                                            </span>
-                                            <span className="text-[10px] text-gray-400">↗</span>
-                                        </a>
-                                    </li>
-                                )}
-                                {apiPolicy.refUrlAddr2 && (
-                                    <li>
-                                        <a href={apiPolicy.refUrlAddr2} target="_blank" rel="noopener noreferrer"
-                                           className="flex items-center gap-2 text-teal-600 dark:text-teal-400 hover:underline text-sm font-medium">
-                                            <span>•</span>
-                                            <span className="truncate break-all max-w-[170px]" title={apiPolicy.refUrlAddr2}>
-                                                {new URL(apiPolicy.refUrlAddr2).hostname}
-                                            </span>
-                                            <span className="text-[10px] text-gray-400">↗</span>
-                                        </a>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
-                    )}
-
-                    {/* Operations Metadata Info */}
-                    <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm text-xs text-gray-500 dark:text-gray-400 space-y-3">
-                        <h3 className="text-xs font-bold text-gray-800 dark:text-gray-200 mb-1 border-b border-gray-100 dark:border-slate-800 pb-2">📋 정책 정보 고시</h3>
-                        <div className="flex justify-between border-b border-gray-50 dark:border-slate-850/50 pb-2">
-                            <span>주관 기관</span>
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">{apiPolicy.sprvsnInstCdNm || "-"}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-50 dark:border-slate-850/50 pb-2">
-                            <span>운영 기관</span>
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">{apiPolicy.operInstCdNm || "-"}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-50 dark:border-slate-850/50 pb-2">
-                            <span>조회수</span>
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">{Number(apiPolicy.inqCnt).toLocaleString()}회</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-50 dark:border-slate-850/50 pb-2">
-                            <span>최종 수정일</span>
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">{apiPolicy.lastMdfcnDt?.slice(0, 10) || "-"}</span>
-                        </div>
-                        <div className="flex justify-between text-[10px] text-gray-400 pt-1">
-                            <span>정책 번호</span>
-                            <span>{apiPolicy.plcyNo}</span>
-                        </div>
-                    </div>
-
-                    {/* Related Policies */}
-                    {relatedPolicies.length > 0 && (
-                        <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100 mb-3 flex items-center gap-2">
-                                <span>📌</span> {catName} 관련 정책
-                            </h3>
-                            <div className="space-y-3">
-                                {relatedPolicies.map((p) => (
-                                    <Link key={p.plcyNo} href={`/policy/${p.plcyNo}`}
-                                          className="block p-3.5 bg-slate-50 hover:bg-teal-50/20 dark:bg-slate-800/40 dark:hover:bg-slate-800 border border-gray-100/50 dark:border-slate-800/50 rounded-xl transition-all duration-200 group">
-                                        <h4 className="font-semibold text-xs text-gray-800 dark:text-gray-200 mb-1 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{p.plcyNm}</h4>
-                                        <p className="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">{p.plcyExplnCn}</p>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Footer Notice Info */}
-            <div className="mt-16 pt-6 border-t border-gray-100 dark:border-slate-800/80">
-                <div className="flex items-start gap-2.5 text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    <span>📌</span>
-                    <p>본 정보는 온통청년(youthcenter.go.kr) API를 통해 제공되며, 실시간 정책 상황에 따라 정보가 다를 수 있습니다. 신청 전에 반드시 주관 기관의 공식 채널을 통해 세부 조건을 재확인하시기 바랍니다.</p>
-                </div>
-            </div>
-        </article>
-    );
+    return <PolicyDetailClient policy={mappedPolicy} />;
 }

@@ -14,6 +14,7 @@ export type PolicyMeta = {
     categorySlug: string;
     date: string;
     updated?: string;
+    tags?: string[];
 };
 
 export type Policy = PolicyMeta & { contentHtml: string };
