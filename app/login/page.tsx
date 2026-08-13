@@ -21,12 +21,18 @@ export default function LoginPage() {
     // 환경변수가 없는 자동 배포 환경에서도 로그인 버튼이 동작하도록 기본값을 둡니다.
     const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "59719943280-0na6m9vtnigsphmts2459q118448sqle.apps.googleusercontent.com";
 
-    // If already logged in, redirect to bookmarks page
+    // 이미 로그인된 사용자는 즉시 진입시키되, Google 콜백 처리 중에는
+    // 아래의 지연 전환이 완료될 때까지 이 효과가 먼저 라우팅하지 않게 합니다.
     useEffect(() => {
-        if (user) {
-            router.push("/bookmarks");
+        if (user && !isLoading) {
+            router.replace("/bookmarks");
         }
-    }, [user, router]);
+    }, [user, isLoading, router]);
+
+    // 로그인 완료 후 이동할 화면을 미리 불러와 Google 콜백 직후의 첫 라우팅을 안정화합니다.
+    useEffect(() => {
+        router.prefetch("/bookmarks");
+    }, [router]);
 
     // Load Google Identity Services SDK dynamically
     useEffect(() => {
@@ -76,6 +82,8 @@ export default function LoginPage() {
 
     const handleCredentialResponse = (response: any) => {
         setIsLoading(true);
+        let isRedirecting = false;
+
         try {
             const token = response.credential;
             const base64Url = token.split(".")[1];
@@ -96,14 +104,20 @@ export default function LoginPage() {
                 picture: payload.picture,
             });
 
-            // Google 콜백 직후에는 Next.js 클라이언트 라우팅이 RSC 요청과
-            // 경합할 수 있으므로, 저장 직후 전체 문서 이동으로 안정적으로 진입합니다.
-            window.location.replace("/bookmarks");
+            // Google Identity Services 콜백이 끝난 후 이동해야 브라우저의
+            // 일시적인 오류 화면 없이 안정적으로 화면을 전환할 수 있습니다.
+            isRedirecting = true;
+            window.setTimeout(() => {
+                router.replace("/bookmarks");
+            }, 400);
         } catch (err) {
             console.error("Token decoding error:", err);
             alert("Google 로그인 데이터를 처리하지 못했습니다.");
         } finally {
-            setIsLoading(false);
+            // 전환 중에는 로딩 상태를 유지해 중복 클릭을 막습니다.
+            if (!isRedirecting) {
+                setIsLoading(false);
+            }
         }
     };
     return (
