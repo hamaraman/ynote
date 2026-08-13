@@ -75,14 +75,14 @@ export const CATEGORIES: Record<string, CategoryMeta> = {
         examples: "마음건강바우처, 청년몽땅정보통",
         color: "bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:hover:bg-emerald-900/30 dark:border dark:border-emerald-900/20 text-gray-900 dark:text-gray-100",
     },
-    region: {
-        name: "지역별 혜택",
-        navLabel: "지역별",
-        icon: "📍",
-        description: "서울, 경기, 부산 등 지자체별 청년 사업",
-        examples: "서울/경기/부산 등 지자체 지원",
-        color: "bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/20 dark:hover:bg-orange-900/30 dark:border dark:border-orange-900/20 text-gray-900 dark:text-gray-100",
-    },
+//     region: {
+//         name: "지역별 혜택",
+//         navLabel: "지역별",
+//         icon: "📍",
+//         description: "서울, 경기, 부산 등 지자체별 청년 사업",
+//         examples: "서울/경기/부산 등 지자체 지원",
+//         color: "bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/20 dark:hover:bg-orange-900/30 dark:border dark:border-orange-900/20 text-gray-900 dark:text-gray-100",
+//     },
 };
 
 export const CATEGORY_SLUGS = Object.keys(CATEGORIES);
