@@ -5,6 +5,8 @@ category: "주거"
 categorySlug: "housing"
 date: "2026-06-11"
 tags: ["청년월세지원", "주거지원", "월세", "복지로", "국토교통부"]
+applyUrl: "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004661"
+applyLinkLabel: "청년월세 지원 신청하기"
 ---
 
 월세는 청년 1인 가구가 가장 크게 체감하는 고정 지출입니다. 정부는 이 부담을 덜어주기 위해 **청년월세 특별지원**을 운영하고 있는데요. 2022년부터 '한시 특별지원'으로 운영되다가, **2026년부터는 상시(계속) 사업으로 전환**되면서 조건도 일부 바뀌었습니다. 이 글에서는 2026년 기준으로 누가, 얼마를, 어떻게 받을 수 있는지 정리했습니다.
