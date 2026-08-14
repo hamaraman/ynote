@@ -43,8 +43,8 @@ export default function Header() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Left: Logo */}
-                    <div className="flex items-center gap-8">
-                        <Link href="/" className="flex items-center gap-2 group">
+                    <div className="flex min-w-0 items-center gap-5 lg:gap-8">
+                        <Link href="/" className="flex shrink-0 items-center gap-2 group">
                             {/* Blue note style icon */}
                             <div className="w-9 h-9 rounded-xl bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform duration-200">
                                 청
@@ -55,7 +55,7 @@ export default function Header() {
                         </Link>
 
                         {/* Desktop: Navigation menu */}
-                        <nav className="hidden md:flex items-center gap-6">
+                        <nav className="hidden lg:flex items-center gap-6">
                             {navItems.map((item) => {
                                 const isActive = pathname === item.href || (item.href.startsWith("/search") && pathname === "/search");
                                 return (
@@ -76,11 +76,11 @@ export default function Header() {
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex shrink-0 items-center gap-1 sm:gap-2 lg:gap-3">
                         {/* Theme Toggle (Moon/Sun) */}
                         <button
                             onClick={toggleTheme}
-                            className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                            className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800"
                             aria-label="테마 전환"
                         >
                             {isDark ? (
@@ -97,7 +97,7 @@ export default function Header() {
                         {/* Heart Icon (Bookmarks) */}
                         <a
                             href="/bookmarks"
-                            className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative"
+                            className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800"
                             aria-label="저장한 정책"
                         >
                             <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +126,7 @@ export default function Header() {
                                             router.push("/");
                                         }
                                     }}
-                                    className="hidden sm:inline-flex items-center justify-center border border-gray-250 dark:border-slate-800 text-gray-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-900/30 dark:text-gray-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                                    className="hidden lg:inline-flex items-center justify-center border border-gray-250 px-2.5 py-1.5 text-xs font-semibold text-gray-500 transition-colors hover:border-red-200 hover:text-red-500 dark:border-slate-800 dark:text-gray-400 dark:hover:border-red-900/30"
                                 >
                                     로그아웃
                                 </button>
@@ -134,7 +134,7 @@ export default function Header() {
                         ) : (
                             <Link
                                 href="/login"
-                                className="hidden sm:inline-flex items-center justify-center border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-200 px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                                className="hidden lg:inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-700 dark:text-gray-200 dark:hover:bg-slate-800"
                             >
                                 로그인
                             </Link>
@@ -143,7 +143,7 @@ export default function Header() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                            className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800 lg:hidden"
                             aria-label="메뉴 토글"
                         >
                             {isMobileMenuOpen ? (
@@ -162,7 +162,7 @@ export default function Header() {
 
             {/* Mobile Menu Drawer */}
             {isMobileMenuOpen && (
-                <div className="md:hidden border-t border-gray-150 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 space-y-1">
+                <div className="border-t border-gray-150 bg-white px-4 py-3 space-y-1 dark:border-slate-800 dark:bg-slate-950 lg:hidden">
                     {navItems.map((item) => (
                         <Link
                             key={item.href}

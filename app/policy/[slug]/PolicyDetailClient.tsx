@@ -84,14 +84,14 @@ export default function PolicyDetailClient({ policy }: PolicyDetailClientProps) 
             </nav>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start bg-white dark:bg-slate-900 border border-gray-150 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm">
-                <div className="lg:col-span-7 space-y-4">
+                <div className="min-w-0 lg:col-span-7 space-y-4">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className={`text-xs px-2.5 py-1 rounded-lg font-bold border ${categoryTheme.bg}`}>{policy.category}</span>
                         <span className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 font-bold rounded-lg border border-blue-100 dark:border-blue-900/30">신청 정보 확인</span>
                     </div>
 
-                    <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">{policy.title}</h1>
-                    <p className="text-base font-bold text-gray-500 dark:text-gray-400">{policy.description}</p>
+                    <h1 className="break-keep text-balance text-2xl font-black leading-tight text-gray-900 dark:text-white sm:text-[1.75rem] lg:text-3xl">{policy.title}</h1>
+                    <p className="break-keep text-base font-bold leading-relaxed text-gray-500 dark:text-gray-400">{policy.description}</p>
 
                     <div className="flex flex-wrap gap-2 pt-1">
                         {policy.targetTags.map((tag) => (
@@ -144,24 +144,24 @@ export default function PolicyDetailClient({ policy }: PolicyDetailClientProps) 
                     </div>
                 </div>
 
-                <div className="lg:col-span-5 w-full bg-gray-50/50 dark:bg-slate-800/30 border border-gray-150 dark:border-slate-800 rounded-2xl p-6 space-y-4">
-                    <div className="flex justify-between items-center text-sm border-b border-gray-100 dark:border-slate-800/80 pb-3">
-                        <span className="font-bold text-gray-400">마감일</span>
-                        <span className="font-black text-red-500 dark:text-red-400">{policy.deadline} ({policy.dday})</span>
+                <div className="min-w-0 lg:col-span-5 w-full bg-gray-50/50 dark:bg-slate-800/30 border border-gray-150 dark:border-slate-800 rounded-2xl p-6 space-y-4">
+                    <div className="flex items-center justify-between gap-4 text-sm border-b border-gray-100 dark:border-slate-800/80 pb-3">
+                        <span className="shrink-0 font-bold text-gray-400">마감일</span>
+                        <span className="min-w-0 break-keep text-right font-black text-red-500 dark:text-red-400">{policy.deadline} ({policy.dday})</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm border-b border-gray-100 dark:border-slate-800/80 pb-3">
-                        <span className="font-bold text-gray-400">지원금액</span>
-                        <span className="font-black text-gray-700 dark:text-gray-200">{policy.amount}</span>
+                    <div className="flex items-center justify-between gap-4 text-sm border-b border-gray-100 dark:border-slate-800/80 pb-3">
+                        <span className="shrink-0 font-bold text-gray-400">지원금액</span>
+                        <span className="min-w-0 break-keep text-right font-black text-gray-700 dark:text-gray-200">{policy.amount}</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm pb-1">
-                        <span className="font-bold text-gray-400">지원대상</span>
-                        <span className="font-black text-gray-700 dark:text-gray-200 text-right truncate max-w-[200px]" title={policy.targetDesc}>{policy.targetDesc}</span>
+                    <div className="flex items-center justify-between gap-4 text-sm pb-1">
+                        <span className="shrink-0 font-bold text-gray-400">지원대상</span>
+                        <span className="min-w-0 max-w-[min(62vw,20rem)] truncate text-right font-black text-gray-700 dark:text-gray-200" title={policy.targetDesc}>{policy.targetDesc}</span>
                     </div>
                 </div>
             </div>
 
             <div className="border-b border-gray-150 dark:border-slate-800">
-                <nav aria-label="정책 상세 정보" className="flex flex-wrap -mb-px gap-6">
+                <nav aria-label="정책 상세 정보" className="flex flex-wrap -mb-px gap-x-5 gap-y-0 sm:gap-x-6">
                     {tabs.map((tab) => {
                         const isActive = activeTab === tab.id;
                         return (
@@ -181,7 +181,7 @@ export default function PolicyDetailClient({ policy }: PolicyDetailClientProps) 
             <div className="bg-white dark:bg-slate-900 border border-gray-150 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden min-h-[300px]">
                 {activeTab === "개요" && (
                     <div className="space-y-6 text-left relative z-10 max-w-3xl">
-                        <p className="text-base font-extrabold text-gray-800 dark:text-gray-200 leading-relaxed">{policy.details.intro}</p>
+                        <p className="break-keep text-base font-extrabold leading-relaxed text-gray-800 dark:text-gray-200">{policy.details.intro}</p>
                         <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-slate-800 text-sm">
                             <div className="flex flex-wrap items-center gap-2"><span className="font-bold text-gray-400 w-24">• 사업기간:</span><span className="font-black text-gray-800 dark:text-gray-200">{policy.details.projectPeriod}</span></div>
                             <div className="flex flex-wrap items-center gap-2"><span className="font-bold text-gray-400 w-24">• 신청기간:</span><span className="font-black text-gray-800 dark:text-gray-200">{policy.details.applyPeriod}</span></div>
