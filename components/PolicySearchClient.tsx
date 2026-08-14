@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import BookmarkButton from "@/components/BookmarkButton";
+import LivePolicySearchResults from "@/components/LivePolicySearchResults";
 
 export type SearchPolicy = {
     id: string;
@@ -83,7 +84,17 @@ const DEFAULT_PRESENTATION: CategoryPresentation = {
     supportTypes: ["기타"],
 };
 
-const REGIONS = ["전체 지역", "전국", "서울", "경기", "부산", "대구", "인천", "광주", "대전", "울산"];
+const REGIONS = [
+    { label: "전체 지역", value: "" },
+    { label: "서울", value: "003002001" },
+    { label: "부산", value: "003002002" },
+    { label: "대구", value: "003002003" },
+    { label: "인천", value: "003002004" },
+    { label: "광주", value: "003002005" },
+    { label: "대전", value: "003002006" },
+    { label: "울산", value: "003002007" },
+    { label: "경기", value: "003002009" },
+];
 const TARGETS = ["대학생", "취준생", "직장인", "창업자", "무주택자", "저소득층", "기타"];
 const SUPPORT_TYPES = ["현금 지원", "교육/훈련", "대출", "시설/공간", "기타"];
 
@@ -105,11 +116,6 @@ function inferTargetTypes(policy: SearchPolicy): string[] {
     return targets.length > 0 ? targets : ["기타"];
 }
 
-function policyMatchesRegion(region: string): boolean {
-    // 콘텐츠 가이드는 전국 기준 정책 정보이므로, 지역을 지정해도 전국 공통 가이드는 함께 표시합니다.
-    return region === "전체 지역" || region === "전국" || REGIONS.includes(region);
-}
-
 interface PolicySearchClientProps {
     initialPolicies: SearchPolicy[];
 }
@@ -119,7 +125,7 @@ export default function PolicySearchClient({ initialPolicies }: PolicySearchClie
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [selectedRegion, setSelectedRegion] = useState("전체 지역");
+    const [selectedRegion, setSelectedRegion] = useState("");
     const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
     const [selectedSupportTypes, setSelectedSupportTypes] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<"latest" | "title">("latest");
@@ -138,8 +144,6 @@ export default function PolicySearchClient({ initialPolicies }: PolicySearchClie
                 const searchableText = `${policy.title} ${policy.description} ${policy.category} ${policy.tags.join(" ")}`.toLowerCase();
                 if (query && !searchableText.includes(query)) return false;
                 if (selectedCategory && policy.categorySlug !== selectedCategory) return false;
-                if (!policyMatchesRegion(selectedRegion)) return false;
-
                 const targetTypes = inferTargetTypes(policy);
                 if (selectedTargets.length > 0 && !targetTypes.some((target) => selectedTargets.includes(target))) return false;
 
@@ -157,10 +161,12 @@ export default function PolicySearchClient({ initialPolicies }: PolicySearchClie
         ) as Record<string, number>;
     }, [initialPolicies]);
 
+    const guideTitles = useMemo(() => initialPolicies.map((policy) => policy.title), [initialPolicies]);
+
     const resetFilters = () => {
         setSearchQuery("");
         setSelectedCategory(null);
-        setSelectedRegion("전체 지역");
+        setSelectedRegion("");
         setSelectedTargets([]);
         setSelectedSupportTypes([]);
         router.push("/search");
@@ -213,7 +219,7 @@ export default function PolicySearchClient({ initialPolicies }: PolicySearchClie
                         <h2 id="policy-region-filter" className="text-sm font-black text-gray-900 dark:text-white">지역</h2>
                         <div className="relative">
                             <select value={selectedRegion} onChange={(event) => setSelectedRegion(event.target.value)} className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-xs font-bold text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300">
-                                {REGIONS.map((region) => <option key={region} value={region}>{region}</option>)}
+                                {REGIONS.map((region) => <option key={region.value || "all"} value={region.value}>{region.label}</option>)}
                             </select>
                             <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▼</span>
                         </div>
@@ -242,17 +248,40 @@ export default function PolicySearchClient({ initialPolicies }: PolicySearchClie
                         </label>
                     </div>
 
-                    {filteredPolicies.length > 0 ? (
-                        <div className="grid gap-4 md:grid-cols-2">
-                            {filteredPolicies.map((policy) => <SearchResultCard key={policy.id} policy={policy} />)}
+                    <section aria-labelledby="guide-policy-title">
+                        <div className="mb-5 flex items-end justify-between gap-4">
+                            <div>
+                                <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500" aria-hidden="true" />
+                                    청년노트 검수
+                                </div>
+                                <h2 id="guide-policy-title" className="break-keep text-xl font-black text-gray-900 dark:text-white">핵심 정책 가이드</h2>
+                                <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">신청 방법과 핵심 조건을 청년노트가 정리한 가이드입니다.</p>
+                            </div>
+                            <p className="shrink-0 text-sm font-bold text-gray-500 dark:text-gray-400"><span className="text-blue-600 dark:text-blue-400">{filteredPolicies.length}개</span> 가이드</p>
                         </div>
-                    ) : (
-                        <div className="rounded-3xl border border-dashed border-gray-200 bg-gray-50 p-16 text-center dark:border-slate-800 dark:bg-slate-900/40">
-                            <p className="font-bold text-gray-500 dark:text-gray-400">조건에 맞는 정책 가이드가 없습니다.</p>
-                            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">검색어를 바꾸거나 필터를 완화해 보세요.</p>
-                            <button type="button" onClick={resetFilters} className="mt-5 rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-600 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-50 dark:bg-slate-800 dark:ring-slate-700">필터 초기화</button>
-                        </div>
-                    )}
+
+                        {filteredPolicies.length > 0 ? (
+                            <div className="grid gap-4 md:grid-cols-2">
+                                {filteredPolicies.map((policy) => <SearchResultCard key={policy.id} policy={policy} />)}
+                            </div>
+                        ) : (
+                            <div className="rounded-3xl border border-dashed border-gray-200 bg-gray-50 p-12 text-center dark:border-slate-800 dark:bg-slate-900/40">
+                                <p className="font-bold text-gray-500 dark:text-gray-400">조건에 맞는 핵심 정책 가이드가 없습니다.</p>
+                                <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">아래 실시간 정부 정책도 함께 확인하거나 필터를 완화해 보세요.</p>
+                                <button type="button" onClick={resetFilters} className="mt-5 rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-600 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-50 dark:bg-slate-800 dark:ring-slate-700">필터 초기화</button>
+                            </div>
+                        )}
+                    </section>
+
+                    <LivePolicySearchResults
+                        query={searchQuery}
+                        categorySlug={selectedCategory}
+                        regionCode={selectedRegion}
+                        selectedTargets={selectedTargets}
+                        selectedSupportTypes={selectedSupportTypes}
+                        guideTitles={guideTitles}
+                    />
                 </main>
             </div>
         </div>
